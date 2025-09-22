@@ -1,0 +1,44 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
+  mode: process.env.NODE_ENV || 'development',
+  entry: './src/index.ts',
+  output: {
+    filename: 'bundle.[contenthash].js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+  },
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            configFile: path.resolve(__dirname, 'babel.config.cjs'),
+          },
+        },
+      },
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  plugins: [new HtmlWebpackPlugin({ template: './public/index.html' })],
+  devServer: {
+    static: path.resolve(__dirname, 'public'),
+    host: 'localhost',
+    port: 5173,
+    open: true,
+  },
+};
