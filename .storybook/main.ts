@@ -12,24 +12,38 @@ const config: StorybookConfig = {
     const c = cfg as any;
     if (!c.module) c.module = { rules: [] };
 
-    const hasBabelForTs = c.module.rules?.some(
-      (rule: any) => rule.test && rule.test.toString().includes('tsx?'),
-    );
-    if (!hasBabelForTs) {
-      c.module.rules?.push({
-        test: /\.[jt]s$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['@babel/preset-env', { targets: 'last 1 Chrome version', modules: false }],
-              ['@babel/preset-typescript', {}],
-            ],
-          },
+    // const hasBabelForTs = c.module.rules?.some(
+    //   (rule: any) => rule.test && rule.test.toString().includes('tsx?'),
+    // );
+    // if (!hasBabelForTs) {
+    //   c.module.rules?.push({
+    //     test: /\.[jt]s$/,
+    //     exclude: /node_modules/,
+    //     use: {
+    //       loader: 'babel-loader',
+    //       options: {
+    //         presets: [
+    //           ['@babel/preset-env', { targets: 'last 1 Chrome version', modules: false }],
+    //           ['@babel/preset-typescript', {}],
+    //         ],
+    //       },
+    //     },
+    //   });
+    // }
+
+    c.module.rules?.push({
+      test: /\.[jt]s$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            ['@babel/preset-env', { targets: 'last 1 Chrome version', modules: false }],
+            ['@babel/preset-typescript', {}],
+          ],
         },
-      });
-    }
+      },
+    });
 
     if (!c.resolve) c.resolve = { extensions: ['.ts', '.js'] };
     c.resolve.alias = {

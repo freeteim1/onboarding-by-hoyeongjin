@@ -14,11 +14,11 @@ export default {
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
-  devtool: 'source-map',
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval-cheap-module-source-map',
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
+        test: /\.[jt]s?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

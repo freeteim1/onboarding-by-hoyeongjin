@@ -93,3 +93,12 @@ npm init -y
 - settings.json 파일을 통해 적용했던 기존 내용 변경
 - "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features"}
   - "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+## devtool 옵션 관련
+
+- source-map -> eval-cheap-module-source-map
+- 디버기
+  | 옵션 | 빌드 속도 | 디버깅 정확도 |
+  |------------------------------|-----------|------------------------|
+  | eval-cheap-module-source-map | 빠름 | 줄 단위까지만 (cheap)
+  | source-map | 느림 | 줄 + 열 단위 (정확함)

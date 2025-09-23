@@ -13,17 +13,7 @@
     "paths": { "*": ["./*"] },
     "types": ["jest", "node"]
   },
-  "include": [
-    "src",
-    "stories",
-    "e2e/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-    // "webpack.config.js",
-    // "babel.config.cjs",
-    // "jest.config.js"
-  ],
-  "exclude": ["dist", "node_modules", "e2e", "**/*.test.ts"]
+  "include": ["src", "stories", "e2e/**/*.ts", "**/*.ts", "**/*.test.ts"],
+  // "exclude": ["dist", "node_modules", "e2e", "**/*.test.ts"]
+  "exclude": ["dist", "node_modules", "**/*.test.ts"]
 }

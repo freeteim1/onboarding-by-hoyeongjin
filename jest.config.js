@@ -2,7 +2,7 @@
 export default {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|tsx|js)$': [
+    '^.+\\.(ts|js)$': [
       'babel-jest',
       {
         babelrc: false,
@@ -13,7 +13,7 @@ export default {
       },
     ],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js'],
+  moduleFileExtensions: ['ts', 'js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
