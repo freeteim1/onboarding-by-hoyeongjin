@@ -102,3 +102,9 @@ npm init -y
   |------------------------------|-----------|------------------------|
   | eval-cheap-module-source-map | 빠름 | 줄 단위까지만 (cheap)
   | source-map | 느림 | 줄 + 열 단위 (정확함)
+
+## jest 렌더링 관련
+
+- jest + jsdom 환경에서 label.innerText → 기대한 값이 안 나올 수 있음
+- 대신 label.textContent 또는 label.innerHTML을 사용하세요.
+- 테스트에서 텍스트 확인은 보통 textContent를 쓰는 게 가장 안전합니다.

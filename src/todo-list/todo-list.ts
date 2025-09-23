@@ -3,9 +3,24 @@ import { TodoListAppOptions, TodoListItem, Utils } from '../types/todo.types';
 
 export default class TodoListApp {
   private _instanceId = `todo-list-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-  private options: TodoListAppOptions;
 
-  private defaultLabel = {
+  get instanceId() {
+    return this._instanceId;
+  }
+  set instanceId(value) {
+    this._instanceId = value;
+  }
+
+  private _options!: TodoListAppOptions;
+
+  get options() {
+    return this._options;
+  }
+  set options(value) {
+    this._options = value;
+  }
+
+  private _defaultLabel = {
     itemCnt: 'items #{} left',
     allItems: 'All',
     activeItems: 'Active',
@@ -14,15 +29,35 @@ export default class TodoListApp {
     noItems: 'There are no to-do items. Please write your to-dos.',
   };
 
-  private selectedBtn: 'allItems' | 'activeItems' | 'completedItems' | 'clearCompleted' =
+  get defaultLabel() {
+    return this._defaultLabel;
+  }
+  set defaultLabel(value) {
+    this._defaultLabel = value;
+  }
+
+  private _selectedBtn: 'allItems' | 'activeItems' | 'completedItems' | 'clearCompleted' =
     'allItems';
 
-  private data = {
+  get selectedBtn() {
+    return this._selectedBtn;
+  }
+  set selectedBtn(value) {
+    this._selectedBtn = value;
+  }
+
+  private _data = {
     items: [] as TodoListItem[],
     inputValue: '',
   };
+  get data() {
+    return this._data;
+  }
+  set data(value) {
+    this._data = value;
+  }
 
-  layouts: {
+  private _layouts: {
     root: HTMLDivElement | null;
     ul: HTMLUListElement | null;
     input: HTMLInputElement | null;
@@ -45,11 +80,20 @@ export default class TodoListApp {
     clearCompleted: null,
     noItems: null,
   };
+  get layouts() {
+    return this._layouts;
+  }
+  set layouts(value) {
+    this._layouts = value;
+  }
 
-  private todoStyles: TodoListAppStyles;
+  private _todoStyles!: TodoListAppStyles;
 
-  get instanceId() {
-    return this._instanceId;
+  get todoStyles() {
+    return this._todoStyles;
+  }
+  set todoStyles(value) {
+    this._todoStyles = value;
   }
 
   constructor(options: TodoListAppOptions) {
@@ -122,7 +166,7 @@ export default class TodoListApp {
     const ul = this.createUl((e) => {
       const checked = (e.target as HTMLInputElement).checked;
       const item = this.data.items.find(
-        (i) => i.id.toString() === (e.target as HTMLInputElement).value,
+        (i) => i.id.toString() === (e.target as HTMLInputElement).id.toString(),
       );
       if (item) {
         item.isChecked = checked;
@@ -215,10 +259,10 @@ export default class TodoListApp {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = isChecked;
-    checkbox.value = id.toString();
+    checkbox.id = id.toString();
     const lb = document.createElement('label');
     lb.className = this.todoStyles.clsNames.label;
-    lb.innerText = label;
+    lb.textContent = label;
     li.appendChild(checkbox);
     li.appendChild(lb);
     return li;
@@ -226,7 +270,7 @@ export default class TodoListApp {
 
   createNoItems() {
     const li = this.createLi(`${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`);
-    li.innerText = this.defaultLabel.noItems;
+    li.textContent = this.defaultLabel.noItems;
     return li;
   }
 
@@ -269,11 +313,10 @@ export default class TodoListApp {
       itemsHTML = [noItems];
     } else {
       itemsHTML = items
-        .sort((a, b) => a.createDt - b.createDt)
+        .sort((a, b) => b.createDt - a.createDt)
         .sort((a, b) => Number(a.isChecked) - Number(b.isChecked))
         .map((item) => this.createRow(item));
     }
-
     if (this.layouts.ul) {
       this.layouts.ul.innerHTML = '';
       itemsHTML.forEach((li) => this.layouts.ul?.appendChild(li));
@@ -282,6 +325,9 @@ export default class TodoListApp {
 
   private renderItemCnt(items: TodoListItem[]) {
     if (!this.layouts.itemCnt) return;
-    this.layouts.itemCnt.innerText = Utils.replaceItemCnt(this.defaultLabel.itemCnt, items.length);
+    this.layouts.itemCnt.textContent = Utils.replaceItemCnt(
+      this.defaultLabel.itemCnt,
+      items.length,
+    );
   }
 }
