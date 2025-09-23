@@ -1,88 +1,87 @@
-import { TodoListAppLayouts } from "src/types/todo.types";
+import { TodoListAppLayouts } from 'src/types/todo.types';
 
 export class TodoListAppStyles {
+  rootStyle = `{
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }`;
 
-    rootStyle = `{
-        max-width: 400px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }`;
+  inputStyle = `{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid blue;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-weight: bold;
+  }`;
 
-    inputStyle = `{
-        width: 100%;
-        padding: 12px;
-        border: 1px solid blue;
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-weight: bold;
-    }`;
+  ulStyle = `{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }`;
 
-    ulStyle = `{
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }`;
+  liStyle = `{
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+  }`;
 
-    liStyle = `{
-        display: flex;
-        align-items: center;
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-    }`;
+  labelStyle = `{
+    margin-left: 8px;
+    flex: 1;
+    cursor: pointer;
+  }`;
 
-    labelStyle = `{
-        margin-left: 8px;
-        flex: 1;
-        cursor: pointer;
-    }`;
+  buttonWrapperStyle = `{
+    margin-top: 15px;
+  }`;
 
-    buttonWrapperStyle = `{
+  buttonPanelStyle = `{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }`;
 
-        margin-top: 15px;
-    }`;
+  panelBtnStyle = `{
+    padding: 6px;
+    border: 0px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }`;
 
-    buttonPanelStyle = `{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-    }`
+  panelLabelStyle = `{
+    font-size: 14px;
+    color: #666;
+  }`;
 
-    panelBtnStyle = `{
-        padding: 6px;
-        border: 0px solid #ddd;
-        background: white;
-        border-radius: 4px;
-        cursor: pointer;
-    }`;
-
-    panelLabelStyle = `{
-        font-size: 14px;
-        color: #666;
-    }`;
-
-    otherStyles = `{
-        li.checked label {
-            text-decoration: line-through;
-            color: #999;
-        }
-    }`;
-
-    clsNames: TodoListAppLayouts = {
-        root: `todo-list-parent`,
-        ul: 'todo-list',
-        li: 'todo-item',
-        input: 'todo-input',
-        label: 'todo-label',
-        buttonWrapper: 'todo-button-wrapper',
-        buttonPanel: 'todo-button-panel',
+  otherStyles = `{
+    li.checked label {
+      text-decoration: line-through;
+      color: #999;
     }
+  }`;
 
-    getStyles(instanceId: string) {
-        return `
+  clsNames: TodoListAppLayouts = {
+    root: `todo-list-parent`,
+    ul: 'todo-list',
+    li: 'todo-item',
+    input: 'todo-input',
+    label: 'todo-label',
+    buttonWrapper: 'todo-button-wrapper',
+    buttonPanel: 'todo-button-panel',
+    noItems: 'todo-no-items',
+  };
+
+  getStyles(instanceId: string) {
+    return `
             .${this.clsNames.root}.${instanceId} ${this.rootStyle}
             .${this.clsNames.root}.${instanceId} .${this.clsNames.input} ${this.inputStyle}
             .${this.clsNames.root}.${instanceId} .${this.clsNames.ul} ${this.ulStyle}
@@ -93,6 +92,6 @@ export class TodoListAppStyles {
             .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} button ${this.panelBtnStyle}
             .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} label ${this.panelLabelStyle}
             .${this.clsNames.root}.${instanceId} ${this.otherStyles}
-        `
-    }
+        `;
+  }
 }

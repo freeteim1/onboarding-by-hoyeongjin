@@ -39,7 +39,7 @@ export default [
   ...tseslint.configs.recommendedTypeChecked,
   {
     name: 'ts-typechecked-only',
-    files: ['src/**/*.ts', 'src/**/*.tsx', 'stories/**/*.ts', 'stories/**/*.tsx', 'e2e/**/*.ts'],
+    files: ['src/**/*.ts', 'stories/**/*.ts', 'e2e/**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: true,

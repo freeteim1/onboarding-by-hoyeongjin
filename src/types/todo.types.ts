@@ -1,26 +1,28 @@
-import { TodoListAppStyles } from "src/models/todo-list-styles.model";
+import { TodoListAppStyles } from 'src/models/todo-list-styles.model';
 
 export interface TodoListItem {
-    id: string;
-    label: string;
-    isChecked: boolean;
-    createDt: number;
+  id: string;
+  label: string;
+  isChecked: boolean;
+  createDt: number;
 }
 
 export interface TodoListAppOptions {
-    el: HTMLDivElement;
-    placeholder?: string;
-    styles?: TodoListAppStyles;
+  el: HTMLDivElement;
+  placeholder?: string;
+  styles?: TodoListAppStyles;
+  items?: TodoListItem[];
 }
 
 export interface TodoListAppLayouts {
-    root: string;
-    ul: string;
-    li: string;
-    input: string;
-    label: string;
-    buttonWrapper: string;
-    buttonPanel: string;
+  root: string;
+  ul: string;
+  li: string;
+  input: string;
+  label: string;
+  buttonWrapper: string;
+  buttonPanel: string;
+  noItems: string;
 }
 // export interface TodoListElementsFeatures {
 //     createUl(onChange?: (e: Event) => void): HTMLUListElement;
@@ -31,7 +33,7 @@ export interface TodoListAppLayouts {
 // }
 
 export const Utils = {
-    replaceItemCnt: (template: string, cnt: number) => {
-        return template.replace('{}', cnt.toString());
-    }
-}
+  replaceItemCnt: (template: string, cnt: number) => {
+    return template.replace('#{}', cnt.toString());
+  },
+};
