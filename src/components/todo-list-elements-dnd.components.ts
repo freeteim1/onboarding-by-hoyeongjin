@@ -8,6 +8,8 @@ export class TodoListAppDnDElements extends TodoListAppElements {
   draggableClsName = '';
   dropzoneClsName = '';
 
+  dragStartPosition = { x: 0, y: 0 };
+
   constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
     super(options, styles, stream);
   }
@@ -22,8 +24,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
 
   createLi(clsName: string) {
     const li = document.createElement('li');
-    li.className = clsName;
-    // li.draggable = true;
+    li.className = `${clsName} draggable`;
     return li;
   }
 
@@ -58,9 +59,8 @@ export class TodoListAppDnDElements extends TodoListAppElements {
           if (!ul) {
             return;
           }
-
+          this.dragStartPosition = { x: me.clientX, y: me.clientY };
           this.dragItem = li;
-
           this.dragItem.style.position = 'absolute';
           this.dragItem.style.zIndex = '1000';
           const { left, top } = li.getBoundingClientRect();
@@ -71,7 +71,6 @@ export class TodoListAppDnDElements extends TodoListAppElements {
           const initialY = me.clientY - top;
 
           const onMousemove = (e: MouseEvent) => {
-            // console.log('mousemove', e);
             if (!this.dragItem) {
               return;
             }
@@ -83,6 +82,14 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             if (!this.dragItem) {
               return;
             }
+            const dx = e.clientX - this.dragStartPosition.x;
+            const dy = e.clientY - this.dragStartPosition.y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist >= 50) {
+              return;
+            }
+
             this.dragItem.style.position = '';
             this.dragItem.style.zIndex = '';
             this.dragItem.style.left = '';
@@ -90,7 +97,15 @@ export class TodoListAppDnDElements extends TodoListAppElements {
 
             const el = document.elementFromPoint(e.clientX, e.clientY);
             const li = el?.closest('li');
-            console.log(this.dragItem, li);
+            // console.log(this.dragItem, li);
+            // console.log(this.dragItem.getAttribute('data-id'), li?.getAttribute('data-id'));
+            this.dispatch({
+              type: 'drop',
+              payload: {
+                start: this.dragItem.getAttribute('data-id'),
+                end: li?.getAttribute('data-id'),
+              },
+            });
 
             ul.removeEventListener('mousemove', onMousemove);
             ul.removeEventListener('mouseup', onMouseup);

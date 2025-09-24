@@ -60,6 +60,7 @@ export default class TodoListApp {
   private _data = {
     items: [] as TodoListItem[],
     inputValue: '',
+    originItems: [] as TodoListItem[],
   };
   get data() {
     return this._data;
@@ -106,10 +107,12 @@ export default class TodoListApp {
         break;
       case 'check':
         {
-          const item = this.data.items.find((i) => i.id === (payload as TodoListItem).id);
-          if (item) {
-            item.isChecked = (payload as TodoListItem).isChecked;
-          }
+          this.data.originItems = this.data.originItems.map((i) => {
+            if (i.id === (payload as TodoListItem).id) {
+              return { ...i, isChecked: (payload as TodoListItem).isChecked };
+            }
+            return i;
+          });
           this.dispatch();
         }
         break;
@@ -140,21 +143,34 @@ export default class TodoListApp {
         }
         break;
       }
-      // case 'dragstart': {
-      //   console.log('dragstart', payload);
-      //   break;
-      // }
-      // case 'dragover': {
-      //   console.log('dragover', payload);
-      //   break;
-      // }
+      case 'dragstart': {
+        console.log('dragstart', payload);
+        break;
+      }
       case 'drop': {
-        const { start, end, direction } = payload as TodoDndPayload;
-        console.log('drop', payload);
+        const { start, end } = payload as TodoDndPayload;
+        const startIndex = this.data.items.findIndex((el) => {
+          return el.id.split('-')[2] === start.split('-')[2];
+        });
+        const endIndex = this.data.items.findIndex(
+          (el) => el.id.split('-')[2] === end.split('-')[2],
+        );
+        this.data.items = this.moveItem(this.data.items, startIndex, endIndex);
+        this.dispatch();
         break;
       }
     }
   };
+
+  moveItem(arr: TodoListItem[], fromIndex: number, toIndex: number) {
+    const newArr = [...arr];
+    const [item] = newArr.splice(fromIndex, 1);
+    if (!item) {
+      return arr;
+    }
+    newArr.splice(toIndex, 0, item);
+    return newArr;
+  }
 
   constructor(options: TodoListAppOptions) {
     this.options = options;
@@ -229,34 +245,41 @@ export default class TodoListApp {
 
   addItem() {
     const newItem: TodoListItem = {
-      id: `todo-li-${Date.now()}`,
+      // id: `todo-li-${Date.now()}`,
+      id: Date.now().toString(),
       label: this.data.inputValue,
       isChecked: false,
       createDt: Date.now(),
     };
-    this.data.items.push(newItem);
+    this.data.originItems.push(newItem);
+    this.data.items = [...this.data.originItems];
     this.dispatch();
   }
 
   dispatch(initialItems?: TodoListItem[]) {
-    let items = initialItems || this.data.items;
+    // let items = initialItems || this.data.items;
+    let items = initialItems || [...this.data.originItems];
     switch (this.selectedBtn) {
       case 'allItems':
       default:
         break;
       case 'activeItems':
-        items = items.filter((i) => !i.isChecked);
+        // items = items.filter((i) => !i.isChecked);
+        items = [...this.data.originItems.filter((i) => !i.isChecked)];
         break;
       case 'completedItems':
-        items = items.filter((i) => i.isChecked);
+        // items = items.filter((i) => i.isChecked);
+        items = [...this.data.originItems.filter((i) => i.isChecked)];
         break;
       case 'clearCompleted':
-        this.data.items = this.data.items.map((i) => ({ ...i, isChecked: false }));
-        items = this.data.items;
+        this.data.originItems = this.data.originItems.filter((i) => {
+          return !i.isChecked;
+        });
+        items = this.data.originItems;
         break;
     }
     this.renderItems(items);
-    this.renderItemCnt(items);
+    this.renderItemCnt(this.data.originItems);
   }
 
   private renderItems(items: TodoListItem[]) {
@@ -265,11 +288,12 @@ export default class TodoListApp {
       const noItems = this.elements.createNoItems();
       itemsHTML = [noItems];
     } else {
-      itemsHTML = items
+      this.data.items = items
         .sort((a, b) => b.createDt - a.createDt)
-        .sort((a, b) => Number(a.isChecked) - Number(b.isChecked))
-        .map((item) => this.elements.createRow(item));
+        .sort((a, b) => Number(a.isChecked) - Number(b.isChecked));
+      // .map((item) => this.elements.createRow(item));
     }
+    itemsHTML = this.data.items.map((item) => this.elements.createRow(item));
     if (this.layouts.ul) {
       this.layouts.ul.innerHTML = '';
       itemsHTML.forEach((li) => this.layouts.ul?.appendChild(li));
