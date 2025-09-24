@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
+import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 import TodoListApp from 'src/todo-list/todo-list';
 
 type InputSectionProps = {
@@ -36,7 +36,7 @@ export const InputSection: Story = {
     const style = document.createElement('style');
     style.textContent = todoStyles.getStyles(app.instanceId);
 
-    const input = app.createInputElements();
+    const input = app.elements.createInputElements();
     root.appendChild(style);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
 

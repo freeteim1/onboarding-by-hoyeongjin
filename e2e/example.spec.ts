@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
+import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 
 test.describe('Todo List App', () => {
   let todoStyles: TodoListAppStyles;
