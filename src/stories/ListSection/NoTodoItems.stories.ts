@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { TodoListAppStyles } from 'src/models/todo-list-styles.model';
+import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
 import TodoListApp from 'src/todo-list/todo-list';
 
 type NoTodoItemProps = {
