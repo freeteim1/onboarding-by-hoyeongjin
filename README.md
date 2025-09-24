@@ -1,70 +1,51 @@
 # 초기 세팅
 
-## Node LTS 권장 (v20+)
-
 npm init -y
 
-## 번들/개발서버
+- 번들/개발서버
+  - npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin
 
-npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin
+- 바벨(ES2015+ → 테스트/번들 공통 변환)
+  - npm i -D @babel/core @babel/preset-env babel-loader
 
-## 바벨(ES2015+ → 테스트/번들 공통 변환)
+- 린팅/포맷팅
+  - npm i -D eslint prettier eslint-config-prettier eslint-plugin-import
 
-npm i -D @babel/core @babel/preset-env babel-loader
+- 유닛 테스트(Jest)
+  - npm i -D jest babel-jest jest-environment-jsdom @testing-library/dom @testing-library/jest-dom
 
-## 린팅/포맷팅
+- E2E(Playwright)
+  - npm i -D @playwright/test start-server-and-test
 
-npm i -D eslint prettier eslint-config-prettier eslint-plugin-import
+- 스타일/에셋(옵션: CSS 사용 시)
+  - npm i -D style-loader css-loader
 
-## 유닛 테스트(Jest)
+- Storybook 8+ (HTML 템플릿)
+  - npx storybook@latest init --type html
 
-npm i -D jest babel-jest jest-environment-jsdom @testing-library/dom @testing-library/jest-dom
+- 타입스크립트 관련 추가 세팅
+  - npm i -D typescript
 
-## E2E(Playwright)
+- npm i -D eslint @eslint/js typescript-eslint eslint-config-prettier \
+  eslint-plugin-import eslint-import-resolver-typescript globals
 
-npm i -D @playwright/test start-server-and-test
+- Prettier
+  - npm i -D prettier
 
-## 스타일/에셋(옵션: CSS 사용 시)
+- Babel (브라우저/테스트 공통 트랜스파일) + TS 프리셋
+  - npm i -D @babel/core @babel/preset-env @babel/preset-typescript babel-jest
 
-npm i -D style-loader css-loader
+- webpack + 로더/플러그인
+- npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin \
+  babel-loader css-loader style-loader
 
-## Storybook 8+ (HTML 템플릿)
+- 테스트(Jest)
+  - npm i -D jest jest-environment-jsdom @testing-library/dom @testing-library/jest-dom
 
-npx storybook@latest init --type html
+- E2E(Playwright)
+  - npm i -D @playwright/test start-server-and-test
 
-## 타입스크립트 관련 추가 세팅
-
-# TypeScript 핵심
-
-npm i -D typescript
-
-# ESLint flat + TS
-
-npm i -D eslint @eslint/js typescript-eslint eslint-config-prettier \
- eslint-plugin-import eslint-import-resolver-typescript globals
-
-# Prettier
-
-npm i -D prettier
-
-# Babel (브라우저/테스트 공통 트랜스파일) + TS 프리셋
-
-npm i -D @babel/core @babel/preset-env @babel/preset-typescript babel-jest
-
-# webpack + 로더/플러그인
-
-npm i -D webpack webpack-cli webpack-dev-server html-webpack-plugin \
- babel-loader css-loader style-loader
-
-# 테스트(Jest)
-
-npm i -D jest jest-environment-jsdom @testing-library/dom @testing-library/jest-dom
-
-# E2E(Playwright)
-
-npm i -D @playwright/test start-server-and-test
-
-# 요구 사항
+# 요구 사항 정리
 
 ## 기본 동작
 
@@ -90,3 +71,40 @@ npm i -D @playwright/test start-server-and-test
 - 현재 남아있는 완료 전 TO-DO 항목의 갯수를 출력한다.
 - [전체], [완료 전], [완료됨] 의 탭으로 TO-DO 목록을 필터해 볼 수 있는 기능을 제공한다.
 - 완료 항복 삭제 기능을 제공한다.\*\*\*\*
+
+# 이슈 정리
+
+## 스토리북 세팅 문제
+
+- @storybook/html-webpack5 미설치, main.ts 누락 문제
+  - 설치확인: npm ls @storybook/html-webpack5
+  - npm i -D @storybook/html-webpack5 @storybook/addon-essentials storybook
+  - .storybook/main.ts 생성
+
+- Storybook HTML 프레임워크 기본 설정에는 TS 처리용 babel/loader 규칙이 없어서 import type { Meta, StoryObj } from '@storybook/html';
+  구문 포함 TS 파일을 그대로 파싱하다가 실패.
+  - main.ts에 webpackFinal 추가: babel-loader + preset-env + preset-typescript 설정, alias src 추가.
+
+- 'src/...' 경로는 현재 Storybook webpack 설정에서 alias 미설정.
+  - 경로를 상대경로로 변경
+
+## prettier 누락 관련
+
+- settings.json 파일을 통해 적용했던 기존 내용 변경
+- "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features"}
+  - "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+## devtool 옵션 관련
+
+- source-map -> eval-cheap-module-source-map
+- 디버기
+  | 옵션 | 빌드 속도 | 디버깅 정확도 |
+  |------------------------------|-----------|------------------------|
+  | eval-cheap-module-source-map | 빠름 | 줄 단위까지만 (cheap)
+  | source-map | 느림 | 줄 + 열 단위 (정확함)
+
+## jest 렌더링 관련
+
+- jest + jsdom 환경에서 label.innerText → 기대한 값이 안 나올 수 있음
+- 대신 label.textContent 또는 label.innerHTML을 사용하세요.
+- 테스트에서 텍스트 확인은 보통 textContent를 쓰는 게 가장 안전합니다.
