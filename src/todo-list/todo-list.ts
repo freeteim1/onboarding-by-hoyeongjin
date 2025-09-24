@@ -1,3 +1,4 @@
+
 import { TodoListAppDnDElements } from '../components/todo-list-elements-dnd.components';
 import { TodoListAppElements } from '../components/todo-list-elements.components';
 import { TodoListAppStyles } from '../components/todo-list-styles.components';
@@ -16,7 +17,6 @@ export default class TodoListApp {
   get instanceId() {
     return this._instanceId;
   }
-
   set instanceId(value) {
     this._instanceId = value;
   }
@@ -98,7 +98,6 @@ export default class TodoListApp {
   set layouts(value) {
     this._layouts = value;
   }
-
   eventStream = ({ type, payload }: { type: string; payload?: any }) => {
     switch (type) {
       case 'input':
