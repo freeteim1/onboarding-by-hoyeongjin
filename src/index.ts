@@ -1,11 +1,11 @@
+import { TodoListAppStyles } from './components/todo-list-styles.components';
 import './index.css';
-import { TodoListAppStyles } from './models/todo-list-styles.model';
 import TodoListApp from './todo-list/todo-list';
 
 (function () {
   try {
     firstRender().render();
-    secondRender().render();
+    // secondRender().render();
   } catch (e) {
     console.error('Error initializing TodoListApp:', e);
   }
@@ -15,6 +15,7 @@ function firstRender() {
   const root = document.getElementById('app');
   const todoListApp = new TodoListApp({
     el: root as HTMLDivElement,
+    useDnd: true,
   });
   return todoListApp;
 }

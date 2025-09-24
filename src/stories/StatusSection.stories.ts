@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { TodoListAppStyles } from 'src/models/todo-list-styles.model';
+import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
 import TodoListApp from 'src/todo-list/todo-list';
 
 type StatusSectionProps = {
@@ -51,7 +51,7 @@ export const StatusSection: Story = {
     style.textContent = todoStyles.getStyles(app.instanceId);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
 
-    app.layouts.buttonWrapper = app.createInformationElements();
+    app.layouts.buttonWrapper = app.createToolboxElements();
 
     const list = new Array(args.itemCount).fill(0).map((i) => {
       return {

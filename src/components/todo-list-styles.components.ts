@@ -40,13 +40,17 @@ export class TodoListAppStyles {
 
   buttonWrapperStyle = `{
     margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
   }`;
 
   buttonPanelStyle = `{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
   }`;
 
   panelBtnStyle = `{
@@ -93,5 +97,16 @@ export class TodoListAppStyles {
             .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} label ${this.panelLabelStyle}
             .${this.clsNames.root}.${instanceId} ${this.otherStyles}
         `;
+  }
+
+  addStyles(instanceId: string) {
+    const styleId = `todo-styles-${instanceId}`;
+    if (document.getElementById(styleId)) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = this.getStyles(instanceId);
+    document.head.appendChild(style);
   }
 }

@@ -1,4 +1,4 @@
-import { TodoListAppStyles } from 'src/models/todo-list-styles.model';
+import { TodoListAppStyles } from '../components/todo-list-styles.components';
 
 export interface TodoListItem {
   id: string;
@@ -7,11 +7,22 @@ export interface TodoListItem {
   createDt: number;
 }
 
+export interface TodoListDefaultLabel {
+  itemCnt: string;
+  allItems: string;
+  activeItems: string;
+  completedItems: string;
+  clearCompleted: string;
+  noItems: string;
+}
+
 export interface TodoListAppOptions {
   el: HTMLDivElement;
   placeholder?: string;
   styles?: TodoListAppStyles;
   items?: TodoListItem[];
+  useDnd?: boolean;
+  defaultLabel?: TodoListDefaultLabel;
 }
 
 export interface TodoListAppLayouts {
@@ -37,3 +48,23 @@ export const Utils = {
     return template.replace('#{}', cnt.toString());
   },
 };
+
+export interface EventsPayload {
+  type: string;
+  handler: (e: Event) => void;
+}
+
+export const DEFAULT_LABEL: TodoListDefaultLabel = {
+  itemCnt: 'items #{} left',
+  allItems: 'All',
+  activeItems: 'Active',
+  completedItems: 'Completed',
+  clearCompleted: 'Clear Completed',
+  noItems: 'There are no to-do items. Please write your to-dos.',
+};
+
+export interface TodoDndPayload {
+  start: HTMLElement | null;
+  end: HTMLElement | null;
+  direction: 'up' | 'down';
+}
