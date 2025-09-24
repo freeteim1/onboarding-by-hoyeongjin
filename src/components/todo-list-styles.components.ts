@@ -73,6 +73,13 @@ export class TodoListAppStyles {
     }
   }`;
 
+  draggableStyles = `{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none
+  }`;
+
   clsNames: TodoListAppLayouts = {
     root: `todo-list-parent`,
     ul: 'todo-list',
@@ -86,17 +93,18 @@ export class TodoListAppStyles {
 
   getStyles(instanceId: string) {
     return `
-            .${this.clsNames.root}.${instanceId} ${this.rootStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.input} ${this.inputStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.ul} ${this.ulStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.li} ${this.liStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.label} ${this.labelStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} ${this.buttonWrapperStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} ${this.buttonPanelStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} button ${this.panelBtnStyle}
-            .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} label ${this.panelLabelStyle}
-            .${this.clsNames.root}.${instanceId} ${this.otherStyles}
-        `;
+      .${this.clsNames.root}.${instanceId} ${this.rootStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.input} ${this.inputStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.ul} ${this.ulStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.li} ${this.liStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.label} ${this.labelStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} ${this.buttonWrapperStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} ${this.buttonPanelStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} button ${this.panelBtnStyle}
+      .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} label ${this.panelLabelStyle}
+      .${this.clsNames.root}.${instanceId} ${this.otherStyles}
+      .${this.clsNames.root}.${instanceId} .draggable ${this.draggableStyles}
+      `;
   }
 
   addStyles(instanceId: string) {

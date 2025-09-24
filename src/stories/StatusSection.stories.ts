@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
+import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 import TodoListApp from 'src/todo-list/todo-list';
 
 type StatusSectionProps = {
@@ -50,8 +50,9 @@ export const StatusSection: Story = {
     const style = document.createElement('style');
     style.textContent = todoStyles.getStyles(app.instanceId);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
+    const { wrapper, panel, elItemCnt, elClearCompleted } = app.elements.createToolboxElements(); //TO DO 정보 출력부
 
-    app.layouts.buttonWrapper = app.createToolboxElements();
+    app.layouts.buttonWrapper = wrapper;
 
     const list = new Array(args.itemCount).fill(0).map((i) => {
       return {
@@ -62,6 +63,9 @@ export const StatusSection: Story = {
       };
     });
     app.dispatch(list);
+    app.layouts.buttonWrapper.appendChild(elItemCnt);
+    app.layouts.buttonWrapper.appendChild(panel);
+    app.layouts.buttonWrapper.appendChild(elClearCompleted);
     root.appendChild(style);
     root.appendChild(app.layouts.buttonWrapper);
     host.appendChild(root);

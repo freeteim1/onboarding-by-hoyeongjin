@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/html';
-import { TodoListAppStyles } from 'src/components/todo-list-elements.components';
+import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 import TodoListApp from 'src/todo-list/todo-list';
 import { TodoListItem } from 'src/types/todo.types';
 
@@ -73,7 +73,7 @@ export const TodoListWithItems: Story = {
     style.textContent = todoStyles.getStyles(app.instanceId);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
 
-    app.layouts.ul = app.createListElements();
+    app.layouts.ul = app.elements.createListElements();
     app.dispatch();
 
     root.appendChild(style);

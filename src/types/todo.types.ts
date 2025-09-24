@@ -64,7 +64,7 @@ export const DEFAULT_LABEL: TodoListDefaultLabel = {
 };
 
 export interface TodoDndPayload {
-  start: HTMLElement | null;
-  end: HTMLElement | null;
-  direction: 'up' | 'down';
+  start: string;
+  end: string;
+  // direction: 'up' | 'down';
 }

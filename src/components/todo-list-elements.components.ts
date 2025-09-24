@@ -69,13 +69,14 @@ export class TodoListAppElements {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = isChecked;
-    checkbox.id = `chk-${id.toString()}`;
+    // checkbox.id = `chk-${id.toString()}`;
+    checkbox.id = id.toString();
     const lb = document.createElement('label');
     lb.className = this.todoStyles.clsNames.label;
     lb.textContent = label;
     lb.htmlFor = checkbox.id;
-    lb.id = `lb-${id.toString()}`;
-    li.id = `li-${id.toString()}`;
+    // lb.id = id.toString();
+    // li.id = id.toString();
     li.setAttribute('data-id', id.toString());
     li.appendChild(checkbox);
     li.appendChild(lb);
