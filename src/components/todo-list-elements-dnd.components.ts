@@ -10,7 +10,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
   cloneLiClsName = 'todo-dnd-clone';
 
   DEFAULT_Z_INDEX = 1000;
-  DETECT_CLICK_DISTANCE = 50;
+  DETECT_CLICK_DISTANCE = 2;
 
   constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
     super(options, styles, stream);

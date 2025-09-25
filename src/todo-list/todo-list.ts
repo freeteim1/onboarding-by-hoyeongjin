@@ -79,8 +79,9 @@ export default class TodoListApp {
     allItems: HTMLButtonElement | null;
     activeItems: HTMLButtonElement | null;
     completedItems: HTMLButtonElement | null;
-    clearCompleted: HTMLButtonElement | null;
+    clearCompleted: HTMLDivElement | null;
     noItems: HTMLLIElement | null;
+    panel: HTMLDivElement | null;
   } = {
     root: null,
     ul: null,
@@ -92,6 +93,7 @@ export default class TodoListApp {
     completedItems: null,
     clearCompleted: null,
     noItems: null,
+    panel: null,
   };
 
   get layouts() {
@@ -100,7 +102,8 @@ export default class TodoListApp {
   set layouts(value) {
     this._layouts = value;
   }
-  eventStream = ({ type, payload }: EventBusType) => {
+
+  eventBus = ({ type, payload }: EventBusType) => {
     switch (type) {
       case 'input':
         this.data.inputValue = payload as string;
@@ -166,7 +169,7 @@ export default class TodoListApp {
       throw new Error('Root element must be a div');
     }
     if (this.options.items) {
-      this.data.items = this.options.items;
+      this.data.originItems = this.options.items;
     }
     if (this.options.defaultLabel) {
       this.defaultLabel = {
@@ -176,10 +179,10 @@ export default class TodoListApp {
     }
 
     this.todoStyles = this.options.styles || new TodoListAppStyles();
+    this.elements = new TodoListAppElements(this.options, this.todoStyles, this.eventBus);
 
-    this.elements = new TodoListAppElements(this.options, this.todoStyles, this.eventStream);
     if (this.options.useDnd) {
-      this.elements = new TodoListAppDnDElements(this.options, this.todoStyles, this.eventStream);
+      this.elements = new TodoListAppDnDElements(this.options, this.todoStyles, this.eventBus);
       if (this.elements instanceof TodoListAppDnDElements) {
         this.elements.draggable(`.${this.todoStyles.clsNames.li}`);
         this.elements.dropzone(`ul.${this.todoStyles.clsNames.ul}`);
@@ -199,6 +202,7 @@ export default class TodoListApp {
     this.layouts.root.className = `${this.todoStyles.clsNames.root} ${this.instanceId}`;
     this.layouts.input = this.elements.createInputElements(); //TO DO 입력부
     this.layouts.ul = this.elements.createListElements(); //TO DO 목록 출력부
+
     const {
       wrapper,
       panel,
@@ -209,16 +213,22 @@ export default class TodoListApp {
       elClearCompleted,
     } = this.elements.createToolboxElements(); //TO DO 정보 출력부
 
-    this.layouts.buttonWrapper = wrapper;
-    this.layouts.itemCnt = elItemCnt;
-    this.layouts.allItems = elAllItems;
     this.layouts.activeItems = elActiveItems;
     this.layouts.completedItems = elCompletedItems;
     this.layouts.clearCompleted = elClearCompleted;
+    this.layouts.allItems = elAllItems;
+    this.layouts.itemCnt = elItemCnt;
+    this.layouts.buttonWrapper = wrapper;
+    this.layouts.panel = panel;
 
-    this.layouts.buttonWrapper.appendChild(this.layouts.itemCnt);
-    this.layouts.buttonWrapper.appendChild(panel);
-    this.layouts.buttonWrapper.appendChild(this.layouts.clearCompleted);
+    panel.appendChild(elAllItems);
+    panel.appendChild(elActiveItems);
+    panel.appendChild(elCompletedItems);
+
+    wrapper.appendChild(elItemCnt);
+    wrapper.appendChild(panel);
+    wrapper.appendChild(elClearCompleted);
+
     this.layouts.root.appendChild(this.layouts.input);
     this.layouts.root.appendChild(this.layouts.ul);
     this.layouts.root.appendChild(this.layouts.buttonWrapper);
@@ -262,6 +272,8 @@ export default class TodoListApp {
     }
     this.renderItems(items);
     this.renderItemCnt(this.data.originItems);
+    this.renderFilterButtons();
+    this.renderClearCompletedBtn(this.data.originItems.filter((i) => i.isChecked).length);
   }
 
   sortItems(items: TodoListItem[]) {
@@ -287,9 +299,41 @@ export default class TodoListApp {
 
   renderItemCnt(items: TodoListItem[]) {
     if (!this.layouts.itemCnt) return;
-    this.layouts.itemCnt.textContent = Utils.replaceItemCnt(
-      this.defaultLabel.itemCnt,
-      items.length,
-    );
+    this.layouts.itemCnt.textContent = Utils.replaceToken(this.defaultLabel.itemCnt, items.length);
+  }
+
+  renderFilterButtons() {
+    const { panel, elAllItems, elActiveItems, elCompletedItems } =
+      this.elements.createToolboxElements();
+
+    switch (this.selectedBtn) {
+      case 'allItems':
+      default:
+        elAllItems.classList.add('active');
+        break;
+      case 'activeItems':
+        elActiveItems.classList.add('active');
+        break;
+      case 'completedItems':
+        elCompletedItems.classList.add('active');
+        break;
+    }
+    panel.innerHTML = '';
+    panel.appendChild(elAllItems);
+    panel.appendChild(elActiveItems);
+    panel.appendChild(elCompletedItems);
+    this.layouts.buttonWrapper?.replaceChild(panel, this.layouts.panel!);
+    this.layouts.panel = panel;
+  }
+
+  renderClearCompletedBtn(cnt: number) {
+    if (!this.layouts.buttonWrapper) {
+      return;
+    }
+    const btn = this.elements.createClearCompletedButton(cnt);
+    if (this.layouts.clearCompleted) {
+      this.layouts.clearCompleted.innerHTML = '';
+      this.layouts.clearCompleted.appendChild(btn);
+    }
   }
 }

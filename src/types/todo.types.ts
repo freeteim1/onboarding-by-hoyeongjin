@@ -48,7 +48,7 @@ export interface TodoListAppLayouts {
 // }
 
 export const Utils = {
-  replaceItemCnt: (template: string, cnt: number) => {
+  replaceToken: (template: string, cnt: number) => {
     return template.replace('#{}', cnt.toString());
   },
   moveItem: (arr: TodoListItem[], fromIndex: number, toIndex: number) => {
@@ -77,7 +77,7 @@ export const DEFAULT_LABEL: TodoListDefaultLabel = {
   allItems: 'All',
   activeItems: 'Active',
   completedItems: 'Completed',
-  clearCompleted: 'Clear Completed',
+  clearCompleted: 'Clear Completed (#{})',
   noItems: 'There are no to-do items. Please write your to-dos.',
 };
 

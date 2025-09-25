@@ -1,16 +1,6 @@
 import { TodoListAppLayouts } from 'src/types/todo.types';
 
 export class TodoListAppStyles {
-  // clsNames: TodoListAppLayouts = {
-  //   root: `todo-list-parent`,
-  //   ul: 'todo-list',
-  //   li: 'todo-item',
-  //   input: 'todo-input',
-  //   label: 'todo-label',
-  //   buttonWrapper: 'todo-button-wrapper',
-  //   buttonPanel: 'todo-button-panel',
-  //   noItems: 'todo-no-items',
-  // };
   clsNames: TodoListAppLayouts = {
     root: `todo`,
     input: 'todo__input',
@@ -26,14 +16,14 @@ export class TodoListAppStyles {
     noItems: 'todo__list__no-items',
   };
 
-  rootStyle = `.${this.clsNames.root} {
+  rootStyle = `{
     max-width: 480px;
     margin: 0 auto;
     background: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }`;
 
-  inputStyle = `.${this.clsNames.input} {
+  inputStyle = `{
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border);
@@ -44,12 +34,12 @@ export class TodoListAppStyles {
     box-sizing: border-box;
   }`;
 
-  ulStyle = `.${this.clsNames.ul} {
+  ulStyle = `{
     list-style: none;
     padding: 0;
   }`;
 
-  liStyle = `.${this.clsNames.li} {
+  liStyle = `{
     display: flex;
     align-items: center;
     padding: 6px 12px;
@@ -57,21 +47,22 @@ export class TodoListAppStyles {
     border-bottom: 1px solid var(--border-light);
   }`;
 
-  checkboxStyle = `.${this.clsNames.checkbox} {
+  checkboxStyle = `{
     width: 18px;
     height: 18px;
     margin-right: 12px;
     cursor: pointer;
   }`;
 
-  labelStyle = `.${this.clsNames.label} {
+  labelStyle = `{
     flex: 1;
     cursor: pointer;
     user-select: none;
     color: var(--text);
   }`;
 
-  buttonWrapperStyle = `.${this.clsNames.buttonWrapper} {
+  buttonWrapperStyle = `{
+    position: relative;
     display: flex;
     border-top: 1px solid var(--border);
     align-items: center;
@@ -79,18 +70,17 @@ export class TodoListAppStyles {
     background: var(--surface);
   }`;
 
-  buttonPanelStyle = `.${this.clsNames.buttonPanel} {
-    width: 50%;
+  buttonPanelStyle = `{
     display: inline-block;
   }`;
 
-  btnCntStyle = `.${this.clsNames.count} {
+  btnCntStyle = `{
     width: 20%;
     font-size: 14px;
     color: #666;
   }`;
 
-  btnFilterStyle = `.${this.clsNames.filter} {
+  btnFilterStyle = `{
     margin: 0 4px;
     padding: 4px 8px;
     border: 1px solid var(--border);
@@ -101,17 +91,21 @@ export class TodoListAppStyles {
     font-size: 14px;
   }`;
 
-  btnClearStyle = `.${this.clsNames.clear} {
+  divClearStyle = `{
+    position: absolute;
+    right: 0px;
+  }`;
+
+  btnClearStyle = `{
     margin: 0 8px;
     display: inline-block;
-    width: 30%;
-    padding: 4px 8px;
+    padding: 4px;
     border: 1px solid var(--danger);
     background: var(--surface);
     color: var(--danger);
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
   }`;
 
   draggableStyles = `.useDnD {
@@ -121,20 +115,69 @@ export class TodoListAppStyles {
     user-select:none
   }`;
 
+  getRootStyle() {
+    return `.${this.clsNames.root} ${this.rootStyle}`;
+  }
+
+  getInputStyle() {
+    return `.${this.clsNames.input} ${this.inputStyle}`;
+  }
+  getUlStyle() {
+    return `.${this.clsNames.ul} ${this.ulStyle}`;
+  }
+  getLiStyle() {
+    return `.${this.clsNames.li} ${this.liStyle}`;
+  }
+  getCheckboxStyle() {
+    return `.${this.clsNames.checkbox} ${this.checkboxStyle}`;
+  }
+  getLabelStyle() {
+    return `.${this.clsNames.label} ${this.labelStyle}`;
+  }
+  getButtonWrapperStyle() {
+    return `.${this.clsNames.buttonWrapper} ${this.buttonWrapperStyle}`;
+  }
+  getButtonPanelStyle() {
+    return `.${this.clsNames.buttonPanel} ${this.buttonPanelStyle}`;
+  }
+  getBtnCntStyle() {
+    return `.${this.clsNames.count} ${this.btnCntStyle}`;
+  }
+  getBtnFilterStyle() {
+    return `.${this.clsNames.filter} ${this.btnFilterStyle}`;
+  }
+  getActiveFilterBtnStyle() {
+    return `.${this.clsNames.filter} ${this.btnFilterStyle}.active {
+      border-color: var(--danger) !important;
+    }`;
+  }
+  getDivClearStyle() {
+    return `.${this.clsNames.clear} ${this.divClearStyle}`;
+  }
+  getBtnClearStyle() {
+    return `.${this.clsNames.clear} button ${this.btnClearStyle}`;
+  }
+
+  getDraggableStyles() {
+    return this.draggableStyles;
+  }
+
   getStyles(instanceId: string) {
     return `
-      .${instanceId}${this.rootStyle}
-      .${instanceId} ${this.inputStyle}
-      .${instanceId} ${this.ulStyle}
-      .${instanceId} ${this.liStyle}
-      .${instanceId} ${this.checkboxStyle}
-      .${instanceId} ${this.labelStyle}
-      .${instanceId} ${this.buttonWrapperStyle}
-      .${instanceId} ${this.buttonPanelStyle}
-      .${instanceId} ${this.btnCntStyle}
-      .${instanceId} ${this.btnFilterStyle}
-      .${instanceId} ${this.btnClearStyle}
-      .${instanceId} ${this.draggableStyles}
+      .${instanceId}${this.getRootStyle()}
+      .${instanceId} ${this.getInputStyle()}
+      .${instanceId} ${this.getUlStyle()}
+      .${instanceId} ${this.getLiStyle()}
+      .${instanceId} ${this.getCheckboxStyle()}
+      .${instanceId} ${this.getLabelStyle()}
+      .${instanceId} ${this.getButtonWrapperStyle()}
+      .${instanceId} ${this.getButtonPanelStyle()}
+      .${instanceId} ${this.getBtnCntStyle()}
+      .${instanceId} ${this.getBtnFilterStyle()}
+      .${instanceId} ${this.getActiveFilterBtnStyle()}
+      .${instanceId} ${this.getDivClearStyle()}
+      .${instanceId} ${this.getBtnClearStyle()}
+      .${instanceId} ${this.getDraggableStyles()}
     `;
   }
 

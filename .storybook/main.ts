@@ -45,6 +45,12 @@ const config: StorybookConfig = {
       },
     });
 
+    c.module.rules.push({
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader'],
+      include: path.resolve(__dirname, '../src'),
+    });
+
     if (!c.resolve) c.resolve = { extensions: ['.ts', '.js'] };
     c.resolve.alias = {
       ...(c.resolve.alias || {}),

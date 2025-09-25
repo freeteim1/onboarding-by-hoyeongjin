@@ -142,13 +142,14 @@ export class TodoListAppElements {
   createToolboxElements() {
     const wrapper = document.createElement('div');
     const panel = document.createElement('div');
-
     const { allItems, activeItems, completedItems, clearCompleted } = this.defaultLabel;
+
     wrapper.className = this.todoStyles.clsNames.buttonWrapper;
     panel.className = this.todoStyles.clsNames.buttonPanel;
+
     const elItemCnt = this.createPanelLabel(
       wrapper,
-      Utils.replaceItemCnt(this.defaultLabel.itemCnt, this.options.items?.length || 0),
+      Utils.replaceToken(this.defaultLabel.itemCnt, this.options.items?.length || 0),
     );
     elItemCnt.className = this.todoStyles.clsNames.count;
 
@@ -185,17 +186,25 @@ export class TodoListAppElements {
       },
     ]);
     elCompletedItems.className = this.todoStyles.clsNames.filter;
-    const elClearCompleted = this.createPanelButton(wrapper, clearCompleted, [
-      {
-        type: 'click',
-        handler: () => {
-          this.dispatch({
-            type: 'clearCompleted',
-          });
-        },
-      },
-    ]);
+    // const elClearCompleted = document.createElement('div');
+    // elClearCompleted.className = this.todoStyles.clsNames.clear;
+    // const btnText = Utils.replaceToken(clearCompleted, 0);
+    // elClearCompleted.appendChild(
+    //   this.createPanelButton(wrapper, btnText, [
+    //     {
+    //       type: 'click',
+    //       handler: () => {
+    //         this.dispatch({
+    //           type: 'clearCompleted',
+    //         });
+    //       },
+    //     },
+    //   ]),
+    // );
+    const elClearCompleted = document.createElement('div');
     elClearCompleted.className = this.todoStyles.clsNames.clear;
+    elClearCompleted.appendChild(this.createClearCompletedButton(0));
+
     return {
       wrapper,
       panel,
@@ -215,5 +224,26 @@ export class TodoListAppElements {
       return;
     }
     return dataId;
+  }
+
+  createClearCompletedButton(num: number) {
+    const btnText = Utils.replaceToken(this.defaultLabel.clearCompleted, num);
+    const button = document.createElement('button');
+    button.innerText = btnText;
+    this.attachEvents(button, [
+      {
+        type: 'click',
+        handler: () => {
+          this.dispatch({
+            type: 'clearCompleted',
+          });
+        },
+      },
+    ]);
+    return button;
+  }
+
+  attachEvents(target: HTMLElement, events: EventsPayload[]) {
+    events.forEach(({ type, handler }: EventsPayload) => target.addEventListener(type, handler));
   }
 }

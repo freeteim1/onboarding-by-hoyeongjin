@@ -5,7 +5,7 @@ import TodoListApp from './todo-list/todo-list';
 (function () {
   try {
     firstRender().render();
-    // secondRender().render();
+    secondRender().render();
   } catch (e) {
     console.error('Error initializing TodoListApp:', e);
   }
@@ -25,26 +25,30 @@ function secondRender() {
   const styles = new TodoListAppStyles();
 
   styles.rootStyle = `{
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      background: skyblue;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 480px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }`;
+
   styles.liStyle = `{
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #eee;
-      background: lightyellow;
-    }`;
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: pink;
+    border-bottom: 1px solid var(--border-light);
+  }`;
+
   styles.btnFilterStyle = `{
-      border: 1px solid #ddd;
-      background: gray;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }`;
+    margin: 0 4px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+   }`;
 
   const todoListApp2 = new TodoListApp({
     el: root as HTMLDivElement,

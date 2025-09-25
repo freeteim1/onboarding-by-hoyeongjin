@@ -136,3 +136,23 @@ npm init -y
 - jest + jsdom 환경에서 label.innerText → 기대한 값이 안 나올 수 있음
 - 대신 label.textContent 또는 label.innerHTML을 사용하세요.
 - 테스트에서 텍스트 확인은 보통 textContent를 쓰는 게 가장 안전합니다.
+
+## 스토리북에서 css변수 사용을 위한 전역 css 올리기 실패
+
+- 아래 코드로 실패
+
+```
+c.module.rules.push({
+  test: /\.css$/,
+  use: ['style-loader', 'css-loader'],
+  include: path.resolve(\_\_dirname, '../src'),
+});
+```
+
+## 실행환경 오류 관련 정리
+
+```
+- .npmrc engine-strict=true 의미 : package.json 의 engines 요구 조건을 강제함
+- nvm install 을 하면 .nvmrc 에 버전이 설치 혹은 use 로 설정됨
+- package.json 에 packageManager : yarn 이나 다른 패키지매니저 사용 못 하게 막음
+```
