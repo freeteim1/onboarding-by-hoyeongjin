@@ -1,3 +1,4 @@
+import { BUTTON_TYPES, Utils } from '../types/todo.types';
 import TodoListApp from './todo-list';
 
 describe('TodoListApp', () => {
@@ -15,35 +16,34 @@ describe('TodoListApp', () => {
   });
 
   test('#2 UI는 TO-DO 입력부와 TO-DO 목록 출력부, 정보 출력부로 나뉜다.', () => {
-    const createInputElementsSpy = jest.spyOn(todoApp as any, 'createInputElements');
-    const createListElementsSpy = jest.spyOn(todoApp as any, 'createListElements');
-    const createToolboxElementsSpy = jest.spyOn(todoApp as any, 'createToolboxElements');
-
     todoApp.initTodoList();
-
-    expect(createInputElementsSpy).toHaveBeenCalledTimes(1);
-    expect(createListElementsSpy).toHaveBeenCalledTimes(1);
-    expect(createInformationElementsSpy).toHaveBeenCalledTimes(1);
+    expect(todoApp.layouts.root).toBeTruthy();
+    expect(todoApp.layouts.input).toBeTruthy();
+    expect(todoApp.layouts.ul).toBeTruthy();
+    expect(todoApp.layouts.buttonWrapper).toBeTruthy();
   });
 
   describe('#3 TO-DO 입력부', () => {
-    test('#3-1 TO-DO 입력 받을 수 있는 input요소가 있다.', () => {
-      const createInputSpy = jest.spyOn(todoApp as any, 'createInput');
-      todoApp.createInputElements();
-      expect(createInputSpy).toHaveBeenCalledTimes(1);
-    });
-    test('#3-1 TO-DO 입력 받을 수 있는 input요소가 있다.', () => {
-      const el = todoApp.createInput();
-      expect(el).toBeInstanceOf(HTMLInputElement);
+    test('#3-1 TO-DO 입력 받을 수 있는 input 요소가 있다.', () => {
+      const createInputElementsSpy = jest.spyOn(todoApp.elements as any, 'createInputElements');
+      todoApp.initTodoList();
+      expect(createInputElementsSpy).toHaveBeenCalledTimes(1);
+      expect(todoApp.layouts.input).toBeTruthy();
     });
     test('#3-2 > TO-DO를 입력하고 Enter키를 누르면 TO-DO를 등록할 수 있다.', () => {
-      const addItemSpy = jest.spyOn(todoApp as any, 'addItem');
-      const input = todoApp.createInput(
-        () => {},
-        () => todoApp.addItem(),
-      );
-      input.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter' })); // keydown 변경
-      expect(addItemSpy).toHaveBeenCalledTimes(1);
+      const dispatchSpy = jest.spyOn(todoApp.elements as any, 'dispatch');
+      // const eventBusSpy = jest.spyOn(todoApp as any, 'eventBus', 'get');
+
+      todoApp.initTodoList();
+
+      const input = todoApp.layouts.input as HTMLInputElement;
+      input.value = 'Test TODO';
+      todoApp.data.inputValue = input.value;
+      input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); // keydown 변경
+
+      expect(dispatchSpy).toHaveBeenCalledTimes(1);
+      expect(todoApp.data.originItems.length).toEqual(1);
+      expect(todoApp.layouts.ul?.querySelector('li')?.textContent).toEqual('Test TODO');
     });
   });
   describe('#4 TO-DO 목록 출력부', () => {
@@ -142,39 +142,43 @@ describe('TodoListApp', () => {
         {
           id: '2',
           label: 'Test TODO2',
-          isChecked: false,
-          createDt: Date.now(),
-        },
-      ];
-      todoApp.initTodoList();
-      todoApp.dispatch(sample);
-      // expect(todoApp.layouts.itemCnt?.textContent).toEqual(
-      //   Utils.replaceItemCnt(todoApp.defaultLabel.itemCnt, sample.length),
-      // );
-    });
-    test('#5-2 TO-DO 목록을 필터해 볼 수 있는 기능을 제공한다', () => {
-      const sample = [
-        {
-          id: '1',
-          label: 'Unchecked Item',
-          isChecked: false,
+          isChecked: true,
           createDt: Date.now(),
         },
         {
-          id: '2',
-          label: 'Checked Item',
+          id: '3',
+          label: 'Test TODO3',
           isChecked: true,
           createDt: Date.now(),
         },
       ];
       todoApp.initTodoList();
-      // todoApp.selectedBtn = 'activeItems';
-      todoApp.selectedBtn = 'completedItems';
       todoApp.dispatch(sample);
-      // console.log(todoApp.layouts.ul?.querySelectorAll('li'));
-      // console.log(
-      //   todoApp.layouts.ul?.querySelectorAll('li').forEach((li) => console.log(li.innerHTML)),
-      // );
+      expect(todoApp.layouts.itemCnt?.textContent).toEqual(
+        Utils.replaceToken(todoApp.defaultLabel.itemCnt, sample.filter((i) => !i.isChecked).length),
+      );
+      expect(todoApp.layouts.clearCompleted?.querySelector('button')?.innerText).toEqual(
+        Utils.replaceToken(
+          todoApp.defaultLabel.clearCompleted,
+          sample.filter((i) => i.isChecked).length,
+        ),
+      );
+    });
+
+    test('#5-2 TO-DO 목록을 필터해 볼 수 있는 기능을 제공한다', () => {
+      todoApp.initTodoList();
+      expect(todoApp.layouts.buttonPack).toBeTruthy();
+      expect(todoApp.layouts.allItems).toBeTruthy();
+      expect(todoApp.layouts.activeItems).toBeTruthy();
+      expect(todoApp.layouts.completedItems).toBeTruthy();
+      expect(todoApp.layouts.clearCompleted).toBeTruthy();
+
+      todoApp.layouts.allItems?.click();
+      expect(todoApp.selectedBtn).toEqual(BUTTON_TYPES.ALL_ITEMS);
+      todoApp.layouts.activeItems?.click();
+      expect(todoApp.selectedBtn).toEqual(BUTTON_TYPES.ACTIVE_ITEMS);
+      todoApp.layouts.completedItems?.click();
+      expect(todoApp.selectedBtn).toEqual(BUTTON_TYPES.COMPLETED_ITEMS);
     });
   });
 });

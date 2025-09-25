@@ -1,5 +1,7 @@
 import {
   DEFAULT_LABEL,
+  EVENT_BUS_TYPES,
+  EventBusType,
   EventsPayload,
   TodoListAppOptions,
   TodoListItem,
@@ -9,12 +11,16 @@ import { TodoListAppStyles } from './todo-list-styles.components';
 
 export class TodoListAppElements {
   private options: TodoListAppOptions;
-  private todoStyles: TodoListAppStyles;
   private defaultLabel = DEFAULT_LABEL;
+  todoStyles: TodoListAppStyles;
 
-  dispatch = (event: { type: string; payload?: any }) => {};
+  dispatch: (event: EventBusType) => void;
 
-  constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
+  constructor(
+    options: TodoListAppOptions,
+    styles: TodoListAppStyles,
+    stream: (e: EventBusType) => void,
+  ) {
     this.options = options;
     this.todoStyles = styles;
     this.dispatch = stream;
@@ -28,63 +34,42 @@ export class TodoListAppElements {
 
   createUl(events: EventsPayload[] = []) {
     const ul = document.createElement('ul');
-    ul.className = `${this.todoStyles.clsNames.ul}`;
-    events.forEach(({ type, handler }) => ul.addEventListener(type, handler));
+    this.attachEvents(ul, events);
     return ul;
   }
 
   createInput(events: EventsPayload[] = []) {
     const input = document.createElement('input');
     input.type = 'text';
-    input.className = this.todoStyles.clsNames.input;
-    input.placeholder = this.options.placeholder || 'What needs to be done?';
-    events.forEach(({ type, handler }) => input.addEventListener(type, handler));
+    this.attachEvents(input, events);
     return input;
-  }
-
-  createPanelButton(parent: HTMLDivElement, text: string, events: EventsPayload[] = []) {
-    const button = document.createElement('button');
-    button.innerText = text;
-    parent.appendChild(button);
-    events.forEach(({ type, handler }) => button.addEventListener(type, handler));
-    return button;
-  }
-
-  createPanelLabel(parent: HTMLDivElement, text: string) {
-    const label = document.createElement('label');
-    label.innerText = text;
-    parent.appendChild(label);
-    return label;
-  }
-
-  createLi(clsName: string) {
-    const li = document.createElement('li');
-    li.className = clsName;
-    return li;
   }
 
   createRow(item: TodoListItem) {
     const { id, label, isChecked } = item;
-    const li = this.createLi(`${this.todoStyles.clsNames.li} ${isChecked ? 'checked' : ''}`);
+    const dataId = id.toString();
+    const li = document.createElement('li');
+    li.className = `${this.todoStyles.clsNames.li} ${isChecked ? 'checked' : ''}`;
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = isChecked;
-    // checkbox.id = `chk-${id.toString()}`;
-    checkbox.id = id.toString();
+    checkbox.id = dataId;
+
     const lb = document.createElement('label');
     lb.className = this.todoStyles.clsNames.label;
     lb.textContent = label;
     lb.htmlFor = checkbox.id;
-    // lb.id = id.toString();
-    // li.id = id.toString();
-    li.setAttribute('data-id', id.toString());
+
+    [li, lb, checkbox].forEach((el) => el.setAttribute('data-id', dataId));
     li.appendChild(checkbox);
     li.appendChild(lb);
     return li;
   }
 
   createNoItems() {
-    const li = this.createLi(`${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`);
+    const li = document.createElement('li');
+    li.className = `${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`;
     li.textContent = this.defaultLabel.noItems;
     return li;
   }
@@ -96,17 +81,17 @@ export class TodoListAppElements {
         handler: (e: Event) => {
           const value = (e.target as HTMLInputElement).value;
           this.dispatch({
-            type: 'input',
+            type: EVENT_BUS_TYPES.INPUT,
             payload: value,
           });
         },
       },
       {
-        type: 'keypress',
+        type: 'keydown',
         handler: (e: Event) => {
           if ((e as KeyboardEvent).key === 'Enter') {
             this.dispatch({
-              type: 'addItem',
+              type: EVENT_BUS_TYPES.ADD_ITEM,
             });
             (e.target as HTMLInputElement).value = '';
           }
@@ -114,87 +99,158 @@ export class TodoListAppElements {
       },
     ];
     const input = this.createInput(events);
+    input.className = this.todoStyles.clsNames.input;
+    input.placeholder = this.options.placeholder || 'What needs to be done?';
     return input;
+  }
+
+  onChangeCheckbox(e: Event) {
+    this.dispatch({
+      type: EVENT_BUS_TYPES.CHECK,
+      payload: {
+        id: this.getLiDataId(e),
+      },
+    });
   }
 
   createListElements() {
     const events: EventsPayload[] = [
       {
         type: 'change',
-        handler: (e: Event) => {
-          this.dispatch({
-            type: 'check',
-            payload: {
-              id: (e.target as HTMLInputElement).id,
-              isChecked: (e.target as HTMLInputElement).checked,
-            },
-          });
-        },
+        handler: (e: Event) => this.onChangeCheckbox(e),
       },
     ];
     const ul = this.createUl(events);
+    ul.className = `${this.todoStyles.clsNames.ul}`;
     return ul;
   }
 
   createToolboxElements() {
     const wrapper = document.createElement('div');
-    const panel = document.createElement('div');
+    const buttonPack = document.createElement('div');
+    const { allItems, activeItems, completedItems } = this.defaultLabel;
 
-    const { allItems, activeItems, completedItems, clearCompleted } = this.defaultLabel;
     wrapper.className = this.todoStyles.clsNames.buttonWrapper;
-    panel.className = this.todoStyles.clsNames.buttonPanel;
-    const elItemCnt = this.createPanelLabel(
-      wrapper,
-      Utils.replaceItemCnt(this.defaultLabel.itemCnt, this.options.items?.length || 0),
+    buttonPack.className = this.todoStyles.clsNames.buttonPack;
+
+    // item count
+    const elItemCnt = this.createItemCntLabel(this.defaultLabel.itemCnt, 0);
+
+    // all items
+    const elAllItems = this.createAllItemsButton(allItems);
+
+    // active items
+    const elActiveItems = this.createActiveItemsButton(activeItems);
+
+    // completed items
+    const elCompletedItems = this.createCompletedItemsButton(completedItems);
+
+    // clear completed
+    const elClearCompleted = document.createElement('div');
+    elClearCompleted.className = this.todoStyles.clsNames.clear;
+    elClearCompleted.appendChild(
+      this.createClearCompletedButton(this.defaultLabel.clearCompleted, 0),
     );
-    const elAllItems = this.createPanelButton(panel, allItems, [
-      {
-        type: 'click',
-        handler: () => {
-          this.dispatch({
-            type: 'allItems',
-          });
-        },
-      },
-    ]);
-    const elActiveItems = this.createPanelButton(panel, activeItems, [
-      {
-        type: 'click',
-        handler: () => {
-          this.dispatch({
-            type: 'activeItems',
-          });
-        },
-      },
-    ]);
-    const elCompletedItems = this.createPanelButton(panel, completedItems, [
-      {
-        type: 'click',
-        handler: () => {
-          this.dispatch({
-            type: 'completedItems',
-          });
-        },
-      },
-    ]);
-    const elClearCompleted = this.createPanelButton(wrapper, clearCompleted, [
-      {
-        type: 'click',
-        handler: () => {
-          this.dispatch({
-            type: 'clearCompleted',
-          });
-        },
-      },
-    ]);
+
     return {
       wrapper,
-      panel,
+      buttonPack,
       elItemCnt,
       elAllItems,
       elActiveItems,
       elCompletedItems,
       elClearCompleted,
     };
+  }
+
+  getLiDataId(e: Event) {
+    const dataId: string | null =
+      (e.target as HTMLInputElement | HTMLLabelElement).closest('li')?.getAttribute('data-id') ||
+      null;
+    if (!dataId) {
+      return;
+    }
+    return dataId;
+  }
+
+  createButtonPack() {
+    const buttonPack = document.createElement('div');
+    buttonPack.className = this.todoStyles.clsNames.buttonPack;
+    return buttonPack;
+  }
+
+  createItemCntLabel(text: string, cnt: number) {
+    const label = document.createElement('label');
+    label.innerText = Utils.replaceToken(text, cnt);
+    label.className = this.todoStyles.clsNames.count;
+    return label;
+  }
+
+  createAllItemsButton(btnText: string) {
+    const button = document.createElement('button');
+    button.innerText = btnText;
+    button.className = this.todoStyles.clsNames.filter;
+    this.attachEvents(button, [
+      {
+        type: 'click',
+        handler: () =>
+          this.dispatch({
+            type: EVENT_BUS_TYPES.ALL_ITEMS,
+          }),
+      },
+    ]);
+    return button;
+  }
+
+  createActiveItemsButton(btnText: string) {
+    const button = document.createElement('button');
+    button.innerText = btnText;
+    button.className = this.todoStyles.clsNames.filter;
+    this.attachEvents(button, [
+      {
+        type: 'click',
+        handler: () =>
+          this.dispatch({
+            type: EVENT_BUS_TYPES.ACTIVE_ITEMS,
+          }),
+      },
+    ]);
+    return button;
+  }
+
+  createCompletedItemsButton(btnText: string) {
+    const button = document.createElement('button');
+    button.innerText = btnText;
+    button.className = this.todoStyles.clsNames.filter;
+    this.attachEvents(button, [
+      {
+        type: 'click',
+        handler: () =>
+          this.dispatch({
+            type: EVENT_BUS_TYPES.COMPLETED_ITEMS,
+          }),
+      },
+    ]);
+    return button;
+  }
+
+  createClearCompletedButton(btnText: string, num: number) {
+    const button = document.createElement('button');
+    button.innerText = Utils.replaceToken(btnText, num);
+    this.attachEvents(button, [
+      {
+        type: 'click',
+        handler: () => {
+          this.dispatch({
+            type: EVENT_BUS_TYPES.CLEAR_COMPLETED,
+          });
+        },
+      },
+    ]);
+    return button;
+  }
+
+  attachEvents(target: HTMLElement, events: EventsPayload[]) {
+    events.forEach(({ type, handler }: EventsPayload) => target.addEventListener(type, handler));
   }
 }

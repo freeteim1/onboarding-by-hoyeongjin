@@ -1,3 +1,31 @@
+# 프로젝트 실행 방법
+
+## 설치 및 실행
+
+## 요구사항
+
+- Node.js v20 (하위 호환 확인필요!)
+- npm
+
+### 1. 의존성 설치
+
+```
+npm install
+```
+
+### 2. 개발 서버 실행
+
+| **기능**                | **설치 명령어**                   |
+| ----------------------- | --------------------------------- |
+| 번들/개발서버           | `npm run dev` / `npm run dev`     |
+| ts 체크                 | `npm run typecheck`               |
+| 린팅/포맷팅             | `npm run lint` / `npm run format` |
+| 유닛 테스트 (Jest)      | `npm run test`                    |
+| E2E 테스트 (Playwright) | `npm run e2e`                     |
+| E2E 테스트 show-report  | `npm run e2e:report`              |
+| E2E 테스트 ui 모드      | `npm run e2e:ui`                  |
+| Storybook               | `npm run storybook`               |
+
 # 초기 세팅
 
 npm init -y
@@ -108,3 +136,31 @@ npm init -y
 - jest + jsdom 환경에서 label.innerText → 기대한 값이 안 나올 수 있음
 - 대신 label.textContent 또는 label.innerHTML을 사용하세요.
 - 테스트에서 텍스트 확인은 보통 textContent를 쓰는 게 가장 안전합니다.
+
+## 스토리북에서 css변수 사용을 위한 전역 css 올리기 실패
+
+- 아래 코드로 실패
+
+```
+c.module.rules.push({
+  test: /\.css$/,
+  use: ['style-loader', 'css-loader'],
+  include: path.resolve(\_\_dirname, '../src'),
+});
+```
+
+## 실행환경 오류 관련 정리
+
+```
+- .npmrc engine-strict=true 의미 : package.json 의 engines 요구 조건을 강제함
+- nvm install 을 하면 .nvmrc 에 버전이 설치 혹은 use 로 설정됨
+- package.json 에 packageManager : yarn 이나 다른 패키지매니저 사용 못 하게 막음
+```
+
+## 절대경로 인식 불가 문제
+
+- tsconfig.json path 세팅 누락으로 상대경로에서만 실행가능했던 문제
+
+```
+"paths": { "*": ["./*"], "src/*": ["src/*"] },
+```
