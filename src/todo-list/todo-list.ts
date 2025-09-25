@@ -1,3 +1,4 @@
+import { TodoListRenderer } from 'src/models/todo-list.interface';
 import { TodoListAppDnDElements } from '../components/todo-list-elements-dnd.components';
 import { TodoListAppElements } from '../components/todo-list-elements.components';
 import { TodoListAppStyles } from '../components/todo-list-styles.components';
@@ -10,7 +11,7 @@ import {
   Utils,
 } from '../types/todo.types';
 
-export default class TodoListApp {
+export default class TodoListApp implements TodoListRenderer {
   private _instanceId = `todo-list-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
   private defaultLabel = DEFAULT_LABEL;
 

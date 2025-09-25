@@ -142,7 +142,7 @@ export class TodoListAppElements {
   createToolboxElements() {
     const wrapper = document.createElement('div');
     const panel = document.createElement('div');
-    const { allItems, activeItems, completedItems, clearCompleted } = this.defaultLabel;
+    const { allItems, activeItems, completedItems } = this.defaultLabel;
 
     wrapper.className = this.todoStyles.clsNames.buttonWrapper;
     panel.className = this.todoStyles.clsNames.buttonPanel;
@@ -186,21 +186,6 @@ export class TodoListAppElements {
       },
     ]);
     elCompletedItems.className = this.todoStyles.clsNames.filter;
-    // const elClearCompleted = document.createElement('div');
-    // elClearCompleted.className = this.todoStyles.clsNames.clear;
-    // const btnText = Utils.replaceToken(clearCompleted, 0);
-    // elClearCompleted.appendChild(
-    //   this.createPanelButton(wrapper, btnText, [
-    //     {
-    //       type: 'click',
-    //       handler: () => {
-    //         this.dispatch({
-    //           type: 'clearCompleted',
-    //         });
-    //       },
-    //     },
-    //   ]),
-    // );
     const elClearCompleted = document.createElement('div');
     elClearCompleted.className = this.todoStyles.clsNames.clear;
     elClearCompleted.appendChild(this.createClearCompletedButton(0));
