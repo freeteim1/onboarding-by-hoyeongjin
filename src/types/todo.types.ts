@@ -47,11 +47,25 @@ export const Utils = {
   replaceItemCnt: (template: string, cnt: number) => {
     return template.replace('#{}', cnt.toString());
   },
+  moveItem: (arr: TodoListItem[], fromIndex: number, toIndex: number) => {
+    const newArr = [...arr];
+    const [item] = newArr.splice(fromIndex, 1);
+    if (!item) {
+      return arr;
+    }
+    newArr.splice(toIndex, 0, item);
+    return newArr;
+  },
 };
 
 export interface EventsPayload {
   type: string;
   handler: (e: Event) => void;
+}
+
+export interface EventBusType {
+  type: string;
+  payload?: any;
 }
 
 export const DEFAULT_LABEL: TodoListDefaultLabel = {

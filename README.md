@@ -1,3 +1,31 @@
+# 프로젝트 실행 방법
+
+## 설치 및 실행
+
+## 요구사항
+
+- Node.js v20 (하위 호환 확인필요!)
+- npm
+
+### 1. 의존성 설치
+
+```
+npm install
+```
+
+### 2. 개발 서버 실행
+
+| **기능**                | **설치 명령어**                   |
+| ----------------------- | --------------------------------- |
+| 번들/개발서버           | `npm run dev` / `npm run dev`     |
+| ts 체크                 | `npm run typecheck`               |
+| 린팅/포맷팅             | `npm run lint` / `npm run format` |
+| 유닛 테스트 (Jest)      | `npm run test`                    |
+| E2E 테스트 (Playwright) | `npm run e2e`                     |
+| E2E 테스트 show-report  | `npm run e2e:report`              |
+| E2E 테스트 ui 모드      | `npm run e2e:ui`                  |
+| Storybook               | `npm run storybook`               |
+
 # 초기 세팅
 
 npm init -y

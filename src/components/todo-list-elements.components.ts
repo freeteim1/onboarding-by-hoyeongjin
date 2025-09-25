@@ -1,5 +1,6 @@
 import {
   DEFAULT_LABEL,
+  EventBusType,
   EventsPayload,
   TodoListAppOptions,
   TodoListItem,
@@ -12,9 +13,13 @@ export class TodoListAppElements {
   private todoStyles: TodoListAppStyles;
   private defaultLabel = DEFAULT_LABEL;
 
-  dispatch = (event: { type: string; payload?: any }) => {};
+  dispatch: (event: EventBusType) => void;
 
-  constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
+  constructor(
+    options: TodoListAppOptions,
+    styles: TodoListAppStyles,
+    stream: (e: EventBusType) => void,
+  ) {
     this.options = options;
     this.todoStyles = styles;
     this.dispatch = stream;
@@ -59,25 +64,23 @@ export class TodoListAppElements {
 
   createLi(clsName: string) {
     const li = document.createElement('li');
-    li.className = clsName;
+    li.className = clsName.trim();
     return li;
   }
 
   createRow(item: TodoListItem) {
     const { id, label, isChecked } = item;
+    const dataId = id.toString();
     const li = this.createLi(`${this.todoStyles.clsNames.li} ${isChecked ? 'checked' : ''}`);
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = isChecked;
-    // checkbox.id = `chk-${id.toString()}`;
-    checkbox.id = id.toString();
+    checkbox.id = dataId;
     const lb = document.createElement('label');
     lb.className = this.todoStyles.clsNames.label;
     lb.textContent = label;
     lb.htmlFor = checkbox.id;
-    // lb.id = id.toString();
-    // li.id = id.toString();
-    li.setAttribute('data-id', id.toString());
+    [li, lb, checkbox].forEach((el) => el.setAttribute('data-id', dataId));
     li.appendChild(checkbox);
     li.appendChild(lb);
     return li;
@@ -117,19 +120,20 @@ export class TodoListAppElements {
     return input;
   }
 
+  onChangeCheckbox(e: Event) {
+    this.dispatch({
+      type: 'check',
+      payload: {
+        id: this.getLiDataId(e),
+      },
+    });
+  }
+
   createListElements() {
     const events: EventsPayload[] = [
       {
         type: 'change',
-        handler: (e: Event) => {
-          this.dispatch({
-            type: 'check',
-            payload: {
-              id: (e.target as HTMLInputElement).id,
-              isChecked: (e.target as HTMLInputElement).checked,
-            },
-          });
-        },
+        handler: (e: Event) => this.onChangeCheckbox(e),
       },
     ];
     const ul = this.createUl(events);
@@ -196,5 +200,15 @@ export class TodoListAppElements {
       elCompletedItems,
       elClearCompleted,
     };
+  }
+
+  getLiDataId(e: Event) {
+    const dataId: string | null =
+      (e.target as HTMLInputElement | HTMLLabelElement).closest('li')?.getAttribute('data-id') ||
+      null;
+    if (!dataId) {
+      return;
+    }
+    return dataId;
   }
 }

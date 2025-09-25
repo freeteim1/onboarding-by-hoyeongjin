@@ -103,7 +103,7 @@ export class TodoListAppStyles {
       .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} button ${this.panelBtnStyle}
       .${this.clsNames.root}.${instanceId} .${this.clsNames.buttonWrapper} .${this.clsNames.buttonPanel} label ${this.panelLabelStyle}
       .${this.clsNames.root}.${instanceId} ${this.otherStyles}
-      .${this.clsNames.root}.${instanceId} .draggable ${this.draggableStyles}
+      .${this.clsNames.root}.${instanceId} .useDnD ${this.draggableStyles}
       `;
   }
 

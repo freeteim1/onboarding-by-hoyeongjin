@@ -1,4 +1,3 @@
-
 import { TodoListAppStyles } from './components/todo-list-styles.components';
 import './index.css';
 import TodoListApp from './todo-list/todo-list';
@@ -6,7 +5,7 @@ import TodoListApp from './todo-list/todo-list';
 (function () {
   try {
     firstRender().render();
-    // secondRender().render();
+    secondRender().render();
   } catch (e) {
     console.error('Error initializing TodoListApp:', e);
   }

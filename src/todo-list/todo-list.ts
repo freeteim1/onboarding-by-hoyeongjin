@@ -1,9 +1,9 @@
-
 import { TodoListAppDnDElements } from '../components/todo-list-elements-dnd.components';
 import { TodoListAppElements } from '../components/todo-list-elements.components';
 import { TodoListAppStyles } from '../components/todo-list-styles.components';
 import {
   DEFAULT_LABEL,
+  EventBusType,
   TodoDndPayload,
   TodoListAppOptions,
   TodoListItem,
@@ -62,6 +62,7 @@ export default class TodoListApp {
     inputValue: '',
     originItems: [] as TodoListItem[],
   };
+
   get data() {
     return this._data;
   }
@@ -99,7 +100,7 @@ export default class TodoListApp {
   set layouts(value) {
     this._layouts = value;
   }
-  eventStream = ({ type, payload }: { type: string; payload?: any }) => {
+  eventStream = ({ type, payload }: EventBusType) => {
     switch (type) {
       case 'input':
         this.data.inputValue = payload as string;
@@ -108,7 +109,7 @@ export default class TodoListApp {
         {
           this.data.originItems = this.data.originItems.map((i) => {
             if (i.id === (payload as TodoListItem).id) {
-              return { ...i, isChecked: (payload as TodoListItem).isChecked };
+              return { ...i, isChecked: i.isChecked ? false : true };
             }
             return i;
           });
@@ -142,34 +143,16 @@ export default class TodoListApp {
         }
         break;
       }
-      case 'dragstart': {
-        console.log('dragstart', payload);
-        break;
-      }
       case 'drop': {
         const { start, end } = payload as TodoDndPayload;
-        const startIndex = this.data.items.findIndex((el) => {
-          return el.id.split('-')[2] === start.split('-')[2];
-        });
-        const endIndex = this.data.items.findIndex(
-          (el) => el.id.split('-')[2] === end.split('-')[2],
-        );
-        this.data.items = this.moveItem(this.data.items, startIndex, endIndex);
+        const startIndex = this.data.items.findIndex((el) => el.id === start);
+        const endIndex = this.data.items.findIndex((el) => el.id === end);
+        this.data.originItems = Utils.moveItem(this.data.originItems, startIndex, endIndex);
         this.dispatch();
         break;
       }
     }
   };
-
-  moveItem(arr: TodoListItem[], fromIndex: number, toIndex: number) {
-    const newArr = [...arr];
-    const [item] = newArr.splice(fromIndex, 1);
-    if (!item) {
-      return arr;
-    }
-    newArr.splice(toIndex, 0, item);
-    return newArr;
-  }
 
   constructor(options: TodoListAppOptions) {
     this.options = options;
@@ -256,11 +239,14 @@ export default class TodoListApp {
   }
 
   dispatch(initialItems?: TodoListItem[]) {
-    // let items = initialItems || this.data.items;
-    let items = initialItems || [...this.data.originItems];
+    if (initialItems) {
+      this.data.originItems = initialItems;
+    }
+    let items = [] as TodoListItem[];
     switch (this.selectedBtn) {
       case 'allItems':
       default:
+        items = [...this.data.originItems];
         break;
       case 'activeItems':
         // items = items.filter((i) => !i.isChecked);
@@ -287,10 +273,13 @@ export default class TodoListApp {
       const noItems = this.elements.createNoItems();
       itemsHTML = [noItems];
     } else {
-      this.data.items = items
-        .sort((a, b) => b.createDt - a.createDt)
-        .sort((a, b) => Number(a.isChecked) - Number(b.isChecked));
-      // .map((item) => this.elements.createRow(item));
+      if (this.options.useDnd) {
+        this.data.items = items;
+      } else {
+        this.data.items = items
+          .sort((a, b) => b.createDt - a.createDt)
+          .sort((a, b) => Number(a.isChecked) - Number(b.isChecked));
+      }
     }
     itemsHTML = this.data.items.map((item) => this.elements.createRow(item));
     if (this.layouts.ul) {
