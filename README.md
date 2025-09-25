@@ -156,3 +156,11 @@ c.module.rules.push({
 - nvm install 을 하면 .nvmrc 에 버전이 설치 혹은 use 로 설정됨
 - package.json 에 packageManager : yarn 이나 다른 패키지매니저 사용 못 하게 막음
 ```
+
+## 절대경로 인식 불가 문제
+
+- tsconfig.json path 세팅 누락으로 상대경로에서만 실행가능했던 문제
+
+```
+"paths": { "*": ["./*"], "src/*": ["src/*"] },
+```

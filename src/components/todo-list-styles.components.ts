@@ -9,7 +9,7 @@ export class TodoListAppStyles {
     checkbox: 'todo__checkbox',
     label: 'todo__label',
     buttonWrapper: 'todo__controls',
-    buttonPanel: 'todo__panel',
+    buttonPack: 'todo__package',
     count: 'todo__count',
     filter: 'todo__filter',
     clear: 'todo__clear',
@@ -70,7 +70,7 @@ export class TodoListAppStyles {
     background: var(--surface);
   }`;
 
-  buttonPanelStyle = `{
+  buttonPackStyle = `{
     display: inline-block;
   }`;
 
@@ -137,8 +137,8 @@ export class TodoListAppStyles {
   getButtonWrapperStyle() {
     return `.${this.clsNames.buttonWrapper} ${this.buttonWrapperStyle}`;
   }
-  getButtonPanelStyle() {
-    return `.${this.clsNames.buttonPanel} ${this.buttonPanelStyle}`;
+  getButtonPackStyle() {
+    return `.${this.clsNames.buttonPack} ${this.buttonPackStyle}`;
   }
   getBtnCntStyle() {
     return `.${this.clsNames.count} ${this.btnCntStyle}`;
@@ -171,7 +171,7 @@ export class TodoListAppStyles {
       .${instanceId} ${this.getCheckboxStyle()}
       .${instanceId} ${this.getLabelStyle()}
       .${instanceId} ${this.getButtonWrapperStyle()}
-      .${instanceId} ${this.getButtonPanelStyle()}
+      .${instanceId} ${this.getButtonPackStyle()}
       .${instanceId} ${this.getBtnCntStyle()}
       .${instanceId} ${this.getBtnFilterStyle()}
       .${instanceId} ${this.getActiveFilterBtnStyle()}

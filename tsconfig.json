@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
-    "paths": { "*": ["./*"] },
+    "paths": { "*": ["./*"], "src/*": ["src/*"] },
     "types": ["jest", "node"]
   },
   "include": ["src", "stories", "e2e/**/*.ts", "**/*.ts", "**/*.test.ts"],

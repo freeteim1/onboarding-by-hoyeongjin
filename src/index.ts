@@ -53,6 +53,7 @@ function secondRender() {
   const todoListApp2 = new TodoListApp({
     el: root as HTMLDivElement,
     styles: styles,
+    useDnd: true,
   });
   return todoListApp2;
 }

@@ -1,4 +1,9 @@
-import { EventsPayload, TodoListAppOptions } from 'src/types/todo.types';
+import {
+  DND_OPTIONS,
+  EVENT_BUS_TYPES,
+  EventsPayload,
+  TodoListAppOptions,
+} from '../types/todo.types';
 import { TodoListAppElements } from './todo-list-elements.components';
 import { TodoListAppStyles } from './todo-list-styles.components';
 
@@ -7,10 +12,15 @@ export class TodoListAppDnDElements extends TodoListAppElements {
   draggableClsName = '';
   dropzoneClsName = '';
   dragStartPosition = { x: 0, y: 0 };
-  cloneLiClsName = 'todo-dnd-clone';
 
-  DEFAULT_Z_INDEX = 1000;
-  DETECT_CLICK_DISTANCE = 2;
+  private _cloneLiClsName = 'todo-dnd-clone';
+
+  get cloneLiClsName() {
+    return this._cloneLiClsName;
+  }
+  set cloneLiClsName(name: string) {
+    this._cloneLiClsName = name;
+  }
 
   constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
     super(options, styles, stream);
@@ -45,11 +55,14 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             this.draggableClsName,
           );
           if (!li) {
-            return;
+            return; // li 가 아니면 return
+          }
+          if (li.classList.contains(this.todoStyles.clsNames.noItems)) {
+            return; // li 가 noItems 면 return
           }
           const ul = li.parentElement;
           if (!ul) {
-            return;
+            return; // 관련없는 ul 면 return
           }
           this.dragStartPosition = { x: me.clientX, y: me.clientY };
           this.dragItem = li;
@@ -62,22 +75,21 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             if (!this.dragItem) {
               return;
             }
-
-            if (isAppend) {
-              if (!copyItem) {
-                return;
-              }
-              this.setItemPosition(
-                copyItem,
-                `${e.clientX - initialX}px`,
-                `${e.clientY - initialY}px`,
-              );
-            } else {
+            if (!isAppend) {
               copyItem = this.createCloneLi(li);
               this.floatItem(copyItem);
-              document.querySelector(this.dropzoneClsName)?.appendChild(copyItem);
+              ul.appendChild(copyItem);
               isAppend = true;
+              return;
             }
+            if (!copyItem) {
+              return;
+            }
+            this.setItemPosition(
+              copyItem,
+              `${e.clientX - initialX}px`,
+              `${e.clientY - initialY}px`,
+            );
           };
 
           const onMouseup = (e: MouseEvent) => {
@@ -85,7 +97,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             const dy = e.clientY - this.dragStartPosition.y;
             const dist = Math.hypot(dx, dy);
 
-            if (dist < this.DETECT_CLICK_DISTANCE) {
+            if (dist < DND_OPTIONS.DETECT_CLICK_DISTANCE) {
               this.onChangeCheckbox(e);
               ul.removeEventListener('mousemove', onMousemove);
               ul.removeEventListener('mouseup', onMouseup);
@@ -96,12 +108,14 @@ export class TodoListAppDnDElements extends TodoListAppElements {
               return;
             }
             if (isAppend && copyItem) {
-              ul.removeChild(copyItem);
+              if (copyItem.parentNode === ul) {
+                ul.removeChild(copyItem);
+              }
               isAppend = false;
             }
             const li = this.fromPointLi(e);
             this.dispatch({
-              type: 'drop',
+              type: EVENT_BUS_TYPES.DROP,
               payload: {
                 start: this.dragItem.getAttribute('data-id'),
                 end: li?.getAttribute('data-id'),
@@ -123,7 +137,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
 
   floatItem(item: HTMLElement) {
     item.style.position = 'absolute';
-    item.style.zIndex = this.DEFAULT_Z_INDEX.toString();
+    item.style.zIndex = DND_OPTIONS.DEFAULT_Z_INDEX.toString();
   }
 
   setItemPosition(item: HTMLElement, left: string, top: string) {
@@ -131,6 +145,11 @@ export class TodoListAppDnDElements extends TodoListAppElements {
     item.style.top = top || '';
   }
 
+  /**
+   * 마우스 위치에서 추출한 LI 엘리먼트
+   * @param {MouseEvent} e
+   * @returns HTMLElement | undefined
+   */
   fromPointLi(e: MouseEvent) {
     return document.elementsFromPoint(e.clientX, e.clientY).find((el) => {
       return (
