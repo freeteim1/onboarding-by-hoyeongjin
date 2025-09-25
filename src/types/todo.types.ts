@@ -34,6 +34,10 @@ export interface TodoListAppLayouts {
   buttonWrapper: string;
   buttonPanel: string;
   noItems: string;
+  checkbox: string;
+  count: string;
+  filter: string;
+  clear: string;
 }
 // export interface TodoListElementsFeatures {
 //     createUl(onChange?: (e: Event) => void): HTMLUListElement;

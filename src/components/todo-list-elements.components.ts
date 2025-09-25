@@ -10,8 +10,8 @@ import { TodoListAppStyles } from './todo-list-styles.components';
 
 export class TodoListAppElements {
   private options: TodoListAppOptions;
-  private todoStyles: TodoListAppStyles;
   private defaultLabel = DEFAULT_LABEL;
+  todoStyles: TodoListAppStyles;
 
   dispatch: (event: EventBusType) => void;
 
@@ -33,7 +33,6 @@ export class TodoListAppElements {
 
   createUl(events: EventsPayload[] = []) {
     const ul = document.createElement('ul');
-    ul.className = `${this.todoStyles.clsNames.ul}`;
     events.forEach(({ type, handler }) => ul.addEventListener(type, handler));
     return ul;
   }
@@ -41,8 +40,6 @@ export class TodoListAppElements {
   createInput(events: EventsPayload[] = []) {
     const input = document.createElement('input');
     input.type = 'text';
-    input.className = this.todoStyles.clsNames.input;
-    input.placeholder = this.options.placeholder || 'What needs to be done?';
     events.forEach(({ type, handler }) => input.addEventListener(type, handler));
     return input;
   }
@@ -62,24 +59,22 @@ export class TodoListAppElements {
     return label;
   }
 
-  createLi(clsName: string) {
-    const li = document.createElement('li');
-    li.className = clsName.trim();
-    return li;
-  }
-
   createRow(item: TodoListItem) {
     const { id, label, isChecked } = item;
     const dataId = id.toString();
-    const li = this.createLi(`${this.todoStyles.clsNames.li} ${isChecked ? 'checked' : ''}`);
+    const li = document.createElement('li');
+    li.className = `${this.todoStyles.clsNames.li} ${isChecked ? 'checked' : ''}`;
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = isChecked;
     checkbox.id = dataId;
+
     const lb = document.createElement('label');
     lb.className = this.todoStyles.clsNames.label;
     lb.textContent = label;
     lb.htmlFor = checkbox.id;
+
     [li, lb, checkbox].forEach((el) => el.setAttribute('data-id', dataId));
     li.appendChild(checkbox);
     li.appendChild(lb);
@@ -87,7 +82,8 @@ export class TodoListAppElements {
   }
 
   createNoItems() {
-    const li = this.createLi(`${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`);
+    const li = document.createElement('li');
+    li.className = `${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`;
     li.textContent = this.defaultLabel.noItems;
     return li;
   }
@@ -117,6 +113,8 @@ export class TodoListAppElements {
       },
     ];
     const input = this.createInput(events);
+    input.className = this.todoStyles.clsNames.input;
+    input.placeholder = this.options.placeholder || 'What needs to be done?';
     return input;
   }
 
@@ -137,6 +135,7 @@ export class TodoListAppElements {
       },
     ];
     const ul = this.createUl(events);
+    ul.className = `${this.todoStyles.clsNames.ul}`;
     return ul;
   }
 
@@ -151,6 +150,8 @@ export class TodoListAppElements {
       wrapper,
       Utils.replaceItemCnt(this.defaultLabel.itemCnt, this.options.items?.length || 0),
     );
+    elItemCnt.className = this.todoStyles.clsNames.count;
+
     const elAllItems = this.createPanelButton(panel, allItems, [
       {
         type: 'click',
@@ -161,6 +162,7 @@ export class TodoListAppElements {
         },
       },
     ]);
+    elAllItems.className = this.todoStyles.clsNames.filter;
     const elActiveItems = this.createPanelButton(panel, activeItems, [
       {
         type: 'click',
@@ -171,6 +173,7 @@ export class TodoListAppElements {
         },
       },
     ]);
+    elActiveItems.className = this.todoStyles.clsNames.filter;
     const elCompletedItems = this.createPanelButton(panel, completedItems, [
       {
         type: 'click',
@@ -181,6 +184,7 @@ export class TodoListAppElements {
         },
       },
     ]);
+    elCompletedItems.className = this.todoStyles.clsNames.filter;
     const elClearCompleted = this.createPanelButton(wrapper, clearCompleted, [
       {
         type: 'click',
@@ -191,6 +195,7 @@ export class TodoListAppElements {
         },
       },
     ]);
+    elClearCompleted.className = this.todoStyles.clsNames.clear;
     return {
       wrapper,
       panel,

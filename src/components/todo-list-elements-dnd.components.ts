@@ -116,6 +116,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
       },
     ];
     const ul = this.createUl(events);
+    ul.className = `${this.todoStyles.clsNames.ul}`;
     ul.classList.add('useDnD');
     return ul;
   }

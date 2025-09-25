@@ -5,7 +5,7 @@ import TodoListApp from './todo-list/todo-list';
 (function () {
   try {
     firstRender().render();
-    secondRender().render();
+    // secondRender().render();
   } catch (e) {
     console.error('Error initializing TodoListApp:', e);
   }
@@ -39,7 +39,7 @@ function secondRender() {
       border-bottom: 1px solid #eee;
       background: lightyellow;
     }`;
-  styles.panelBtnStyle = `{
+  styles.btnFilterStyle = `{
       border: 1px solid #ddd;
       background: gray;
       cursor: pointer;
