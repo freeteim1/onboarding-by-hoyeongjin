@@ -145,8 +145,8 @@ export default class TodoListApp {
       }
       case 'drop': {
         const { start, end } = payload as TodoDndPayload;
-        const startIndex = this.data.items.findIndex((el) => el.id === start);
-        const endIndex = this.data.items.findIndex((el) => el.id === end);
+        const startIndex = this.data.originItems.findIndex((el) => el.id === start);
+        const endIndex = this.data.originItems.findIndex((el) => el.id === end);
         this.data.originItems = Utils.moveItem(this.data.originItems, startIndex, endIndex);
         this.dispatch();
         break;
@@ -227,7 +227,6 @@ export default class TodoListApp {
 
   addItem() {
     const newItem: TodoListItem = {
-      // id: `todo-li-${Date.now()}`,
       id: Date.now().toString(),
       label: this.data.inputValue,
       isChecked: false,
@@ -249,11 +248,9 @@ export default class TodoListApp {
         items = [...this.data.originItems];
         break;
       case 'activeItems':
-        // items = items.filter((i) => !i.isChecked);
         items = [...this.data.originItems.filter((i) => !i.isChecked)];
         break;
       case 'completedItems':
-        // items = items.filter((i) => i.isChecked);
         items = [...this.data.originItems.filter((i) => i.isChecked)];
         break;
       case 'clearCompleted':
@@ -267,28 +264,28 @@ export default class TodoListApp {
     this.renderItemCnt(this.data.originItems);
   }
 
-  private renderItems(items: TodoListItem[]) {
-    let itemsHTML: HTMLLIElement[] = [];
+  sortItems(items: TodoListItem[]) {
     if (items.length === 0) {
-      const noItems = this.elements.createNoItems();
-      itemsHTML = [noItems];
-    } else {
-      if (this.options.useDnd) {
-        this.data.items = items;
-      } else {
-        this.data.items = items
-          .sort((a, b) => b.createDt - a.createDt)
-          .sort((a, b) => Number(a.isChecked) - Number(b.isChecked));
-      }
+      return [this.elements.createNoItems()];
     }
-    itemsHTML = this.data.items.map((item) => this.elements.createRow(item));
+    if (this.options.useDnd) {
+      return items.map((item) => this.elements.createRow(item));
+    }
+    return items
+      .sort((a, b) => b.createDt - a.createDt)
+      .sort((a, b) => Number(a.isChecked) - Number(b.isChecked))
+      .map((item) => this.elements.createRow(item));
+  }
+
+  renderItems(items: TodoListItem[]) {
+    const itemsHTML: HTMLLIElement[] = this.sortItems(items);
     if (this.layouts.ul) {
       this.layouts.ul.innerHTML = '';
       itemsHTML.forEach((li) => this.layouts.ul?.appendChild(li));
     }
   }
 
-  private renderItemCnt(items: TodoListItem[]) {
+  renderItemCnt(items: TodoListItem[]) {
     if (!this.layouts.itemCnt) return;
     this.layouts.itemCnt.textContent = Utils.replaceItemCnt(
       this.defaultLabel.itemCnt,

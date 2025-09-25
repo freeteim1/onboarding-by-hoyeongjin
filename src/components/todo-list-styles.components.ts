@@ -13,10 +13,12 @@ export class TodoListAppStyles {
   inputStyle = `{
     width: 100%;
     padding: 12px;
-    border: 1px solid blue;
+    border: 1px solid var(--border);
     border-radius: 4px;
+    font-size: 16px;
+    background: var(--surface);
+    color: var(--text);
     box-sizing: border-box;
-    font-weight: bold;
   }`;
 
   ulStyle = `{
@@ -29,7 +31,8 @@ export class TodoListAppStyles {
     display: flex;
     align-items: center;
     padding: 12px;
-    border-bottom: 1px solid #eee;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-light);
   }`;
 
   labelStyle = `{
@@ -70,6 +73,10 @@ export class TodoListAppStyles {
     li.checked label {
       text-decoration: line-through;
       color: #999;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--btn-active);
     }
   }`;
 
