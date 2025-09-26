@@ -129,7 +129,7 @@ export class TodoListAppStyles {
     return `.${this.clsNames.ul} ${this.ulStyle}`;
   }
   getLiStyle() {
-    return `.${this.clsNames.li} ${this.liStyle}`;
+    return `.${this.clsNames.li} ${this.liStyle} .${this.clsNames.li}.checked { text-decoration: line-through; }`;
   }
   getCheckboxStyle() {
     return `.${this.clsNames.checkbox} ${this.checkboxStyle}`;
