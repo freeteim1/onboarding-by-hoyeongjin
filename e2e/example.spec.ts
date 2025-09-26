@@ -18,6 +18,7 @@ test.describe('Todo List App', () => {
     const completedBtn = page
       .locator(`.${todoStyles.clsNames.filter}`)
       .filter({ hasText: 'Completed' });
+
     const clearDiv = page.locator(`div.${todoStyles.clsNames.clear}`);
 
     expect(todo).toBeTruthy();
@@ -30,22 +31,33 @@ test.describe('Todo List App', () => {
     expect(await clearDiv.count()).toBeTruthy();
   });
 
-  test('할 일을 입력한 후 엔터키를 누르면', async ({ page }) => {
-    const sampleTxt = 'Playwright로 테스트 작성하기';
-
+  test('할 일 항목이 존재하지 않는다면 "There are no to-do items. Please write your to-dos." 메세지를 노출한다.', async ({
+    page,
+  }) => {
     const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
-    const input = page.locator(`.${todoStyles.clsNames.input}`).first();
-    const li = todoUl.locator('li').filter({ hasText: sampleTxt });
-
-    expect(await li.count()).toBe(0); // 입력 전
-
-    await input.fill(sampleTxt);
-    await input.focus();
-    await input.press('Enter');
-
-    expect(await li.count()).toBeGreaterThanOrEqual(1); // 입력 후
+    const li = todoUl.locator('li').first();
+    expect(li.first()).toContainText('There are no to-do items. Please write your to-dos.');
   });
 
+  test.describe('할 일을 입력한 후 엔터키를 누르면', () => {
+    test('입력한 항목이 할 일 목록에 노출된다.', async ({ page }) => {
+      const sampleTxt = 'Playwright로 테스트 작성하기';
+
+      const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
+      const input = page.locator(`.${todoStyles.clsNames.input}`).first();
+      const li = todoUl.locator('li').filter({ hasText: sampleTxt });
+
+      expect(await li.count()).toBe(0); // 입력 전
+
+      await input.fill(sampleTxt);
+      await input.focus();
+      await input.press('Enter');
+
+      expect(await li.count()).toBeGreaterThanOrEqual(1); // 입력 후
+    });
+
+    test('할 일 항목의 완료하지 않은 갯수가 "N" items left  로 노출된다.', async ({ page }) => {});
+  });
   test('D&D 마지막 요소를 맨앞에', async ({ page }) => {
     const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
     const li = todoUl.locator('li');
@@ -74,7 +86,6 @@ test.describe('Todo List App', () => {
       `.${todoStyles.clsNames.li} >> nth=0`,
     );
     await page.waitForTimeout(100);
-
     expect(await li.nth(0).textContent()).toContain(items[3]);
   });
 });

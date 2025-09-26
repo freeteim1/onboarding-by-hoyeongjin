@@ -1,4 +1,4 @@
-import { TodoListAppLayouts } from 'src/types/todo.types';
+import { type TodoListAppLayouts } from 'src/types/todo.types';
 
 export class TodoListAppStyles {
   clsNames: TodoListAppLayouts = {

@@ -1,30 +1,22 @@
-import {
-  DND_OPTIONS,
-  EVENT_BUS_TYPES,
-  EventsPayload,
-  TodoListAppOptions,
-} from '../types/todo.types';
-import { TodoListAppElements } from './todo-list-elements.components';
+import { DND_OPTIONS, EVENT_BUS_TYPES } from '../constants/todo-list.const';
+import { EventBusType, type EventsPayload, type TodoListAppOptions } from '../types/todo.types';
+import { TodoListElementBuilder } from './todo-list-element-builder.components';
 import { TodoListAppStyles } from './todo-list-styles.components';
 
-export class TodoListAppDnDElements extends TodoListAppElements {
+export class TodoListDnDElementBuilder extends TodoListElementBuilder {
   dragItem: HTMLLIElement | null = null;
   draggableClsName = '';
   dropzoneClsName = '';
   dragStartPosition = { x: 0, y: 0 };
-
-  private _cloneLiClsName = 'todo-dnd-clone';
+  cloneLiClsName = 'todo-dnd-clone';
   underlineClsName = 'todo-dnd-underline';
 
-  get cloneLiClsName() {
-    return this._cloneLiClsName;
-  }
-  set cloneLiClsName(name: string) {
-    this._cloneLiClsName = name;
-  }
-
-  constructor(options: TodoListAppOptions, styles: TodoListAppStyles, stream: (e: any) => void) {
-    super(options, styles, stream);
+  constructor(
+    options: TodoListAppOptions,
+    styles: TodoListAppStyles,
+    eventBus: (e: EventBusType) => void,
+  ) {
+    super(options, styles, eventBus);
   }
 
   draggable(draggableClsName: string) {
@@ -41,7 +33,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
     return clone;
   }
 
-  createListElements() {
+  createTodoListElement() {
     const events: EventsPayload[] = [
       {
         type: 'mousedown',
@@ -56,10 +48,10 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             this.draggableClsName,
           );
           if (!li) {
-            return; // li 가 아니면 return
+            return;
           }
           if (li.classList.contains(this.todoStyles.clsNames.noItems)) {
-            return; // li 가 noItems 면 return
+            return; // li 가 noItems 면 드래그할 필요 없음
           }
           const ul = li.parentElement;
           if (!ul) {

@@ -34,7 +34,7 @@ export const NoTodoItems: Story = {
     style.textContent = todoStyles.getStyles(app.instanceId);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
 
-    app.layouts.ul = app.elements.createListElements();
+    app.layouts.ul = app.builder.createTodoListElement();
     app.dispatch();
 
     root.appendChild(style);

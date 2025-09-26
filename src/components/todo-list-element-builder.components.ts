@@ -1,17 +1,16 @@
+import { DEFAULT_LABEL, EVENT_BUS_TYPES } from '../constants/todo-list.const';
 import {
-  DEFAULT_LABEL,
-  EVENT_BUS_TYPES,
-  EventBusType,
-  EventsPayload,
-  TodoListAppOptions,
-  TodoListItem,
   Utils,
+  type EventBusType,
+  type EventsPayload,
+  type TodoListAppOptions,
+  type TodoListItem,
 } from '../types/todo.types';
 import { TodoListAppStyles } from './todo-list-styles.components';
 
-export class TodoListAppElements {
+export class TodoListElementBuilder {
   private options: TodoListAppOptions;
-  private defaultLabel = DEFAULT_LABEL;
+  private initialLabel = DEFAULT_LABEL;
   todoStyles: TodoListAppStyles;
 
   dispatch: (event: EventBusType) => void;
@@ -19,15 +18,15 @@ export class TodoListAppElements {
   constructor(
     options: TodoListAppOptions,
     styles: TodoListAppStyles,
-    stream: (e: EventBusType) => void,
+    eventBus: (e: EventBusType) => void,
   ) {
     this.options = options;
     this.todoStyles = styles;
-    this.dispatch = stream;
-    if (this.options.defaultLabel) {
-      this.defaultLabel = {
+    this.dispatch = eventBus;
+    if (this.options.labels) {
+      this.initialLabel = {
         ...DEFAULT_LABEL,
-        ...this.options.defaultLabel,
+        ...this.options.labels,
       };
     }
   }
@@ -70,27 +69,27 @@ export class TodoListAppElements {
   createNoItems() {
     const li = document.createElement('li');
     li.className = `${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`;
-    li.textContent = this.defaultLabel.noItems;
+    li.textContent = this.initialLabel.noItems;
     return li;
   }
 
-  createInputElements() {
+  createTodoInputElement() {
     let isComposing = false;
     const events: EventsPayload[] = [
       {
         type: 'compositionstart',
-        handler: (e: Event) => (isComposing = true),
+        handler: () => (isComposing = true),
       },
       {
         type: 'compositionend',
-        handler: (e: Event) => (isComposing = false),
+        handler: () => (isComposing = false),
       },
       {
         type: 'input',
         handler: (e: Event) => {
           const value = (e.target as HTMLInputElement).value;
           this.dispatch({
-            type: EVENT_BUS_TYPES.INPUT,
+            type: EVENT_BUS_TYPES.CHANGE_INPUT_VALUE,
             payload: value,
           });
         },
@@ -118,14 +117,14 @@ export class TodoListAppElements {
 
   onChangeCheckbox(e: Event) {
     this.dispatch({
-      type: EVENT_BUS_TYPES.CHECK,
+      type: EVENT_BUS_TYPES.CHANGE_CHECK,
       payload: {
         id: this.getLiDataId(e),
       },
     });
   }
 
-  createListElements() {
+  createTodoListElement() {
     const events: EventsPayload[] = [
       {
         type: 'change',
@@ -137,16 +136,16 @@ export class TodoListAppElements {
     return ul;
   }
 
-  createToolboxElements() {
+  createTodoToolboxElement() {
     const wrapper = document.createElement('div');
     const buttonPack = document.createElement('div');
-    const { allItems, activeItems, completedItems } = this.defaultLabel;
+    const { allItems, activeItems, completedItems } = this.initialLabel;
 
     wrapper.className = this.todoStyles.clsNames.buttonWrapper;
     buttonPack.className = this.todoStyles.clsNames.buttonPack;
 
     // item count
-    const elItemCnt = this.createItemCntLabel(this.defaultLabel.itemCnt, 0);
+    const elItemCnt = this.createItemCntLabel(this.initialLabel.itemCnt, 0);
 
     // all items
     const elAllItems = this.createAllItemsButton(allItems);
@@ -161,7 +160,7 @@ export class TodoListAppElements {
     const elClearCompleted = document.createElement('div');
     elClearCompleted.className = this.todoStyles.clsNames.clear;
     elClearCompleted.appendChild(
-      this.createClearCompletedButton(this.defaultLabel.clearCompleted, 0),
+      this.createClearCompletedButton(this.initialLabel.clearCompleted, 0),
     );
 
     return {
@@ -207,7 +206,7 @@ export class TodoListAppElements {
         type: 'click',
         handler: () =>
           this.dispatch({
-            type: EVENT_BUS_TYPES.ALL_ITEMS,
+            type: EVENT_BUS_TYPES.CLICK_ALL_ITEMS,
           }),
       },
     ]);
@@ -223,7 +222,7 @@ export class TodoListAppElements {
         type: 'click',
         handler: () =>
           this.dispatch({
-            type: EVENT_BUS_TYPES.ACTIVE_ITEMS,
+            type: EVENT_BUS_TYPES.CLICK_ACTIVE_ITEMS,
           }),
       },
     ]);
@@ -239,7 +238,7 @@ export class TodoListAppElements {
         type: 'click',
         handler: () =>
           this.dispatch({
-            type: EVENT_BUS_TYPES.COMPLETED_ITEMS,
+            type: EVENT_BUS_TYPES.CLICK_COMPLETED_ITEMS,
           }),
       },
     ]);
@@ -254,7 +253,7 @@ export class TodoListAppElements {
         type: 'click',
         handler: () => {
           this.dispatch({
-            type: EVENT_BUS_TYPES.CLEAR_COMPLETED,
+            type: EVENT_BUS_TYPES.CLICK_CLEAR_COMPLETED,
           });
         },
       },

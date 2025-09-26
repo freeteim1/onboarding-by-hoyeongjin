@@ -1,4 +1,5 @@
-import { BUTTON_TYPES, Utils } from '../types/todo.types';
+import { BUTTON_TYPES } from '../constants/todo-list.const';
+import { Utils } from '../types/todo.types';
 import TodoListApp from './todo-list';
 
 describe('TodoListApp', () => {
@@ -25,13 +26,16 @@ describe('TodoListApp', () => {
 
   describe('#3 TO-DO 입력부', () => {
     test('#3-1 TO-DO 입력 받을 수 있는 input 요소가 있다.', () => {
-      const createInputElementsSpy = jest.spyOn(todoApp.elements as any, 'createInputElements');
+      const createTodoInputElementSpy = jest.spyOn(
+        todoApp.builder as any,
+        'createTodoInputElement',
+      );
       todoApp.initTodoList();
-      expect(createInputElementsSpy).toHaveBeenCalledTimes(1);
+      expect(createTodoInputElementSpy).toHaveBeenCalledTimes(1);
       expect(todoApp.layouts.input).toBeTruthy();
     });
     test('#3-2 > TO-DO를 입력하고 Enter키를 누르면 TO-DO를 등록할 수 있다.', () => {
-      const dispatchSpy = jest.spyOn(todoApp.elements as any, 'dispatch');
+      const dispatchSpy = jest.spyOn(todoApp.builder as any, 'dispatch');
       // const eventBusSpy = jest.spyOn(todoApp as any, 'eventBus', 'get');
 
       todoApp.initTodoList();
@@ -150,11 +154,11 @@ describe('TodoListApp', () => {
       todoApp.initTodoList();
       todoApp.dispatch(sample);
       expect(todoApp.layouts.itemCnt?.textContent).toEqual(
-        Utils.replaceToken(todoApp.defaultLabel.itemCnt, sample.filter((i) => !i.isChecked).length),
+        Utils.replaceToken(todoApp.initialLabel.itemCnt, sample.filter((i) => !i.isChecked).length),
       );
       expect(todoApp.layouts.clearCompleted?.querySelector('button')?.innerText).toEqual(
         Utils.replaceToken(
-          todoApp.defaultLabel.clearCompleted,
+          todoApp.initialLabel.clearCompleted,
           sample.filter((i) => i.isChecked).length,
         ),
       );
