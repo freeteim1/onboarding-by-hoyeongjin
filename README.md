@@ -130,6 +130,7 @@ npm init -y
   |------------------------------|-----------|------------------------|
   | eval-cheap-module-source-map | 빠름 | 줄 단위까지만 (cheap)
   | source-map | 느림 | 줄 + 열 단위 (정확함)
+- 디버깅시 source map 과 브레이크 포인트의 위치가 안맞는 문제가 있어 롤백
 
 ## jest 렌더링 관련
 
@@ -163,4 +164,12 @@ c.module.rules.push({
 
 ```
 "paths": { "*": ["./*"], "src/*": ["src/*"] },
+```
+
+- jest 에서 src/.. 으로 시작하는 경로 인식 못하는 문제
+
+```
+  moduleNameMapper: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 ```

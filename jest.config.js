@@ -16,4 +16,7 @@ export default {
   moduleFileExtensions: ['ts', 'js'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  moduleNameMapper: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 };

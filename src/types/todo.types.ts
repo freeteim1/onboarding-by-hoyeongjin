@@ -24,7 +24,7 @@ export interface TodoListAppOptions {
   styles?: TodoListAppStyles;
   items?: TodoListItem[];
   useDnd?: boolean;
-  defaultLabel?: TodoListDefaultLabel;
+  labels?: TodoListDefaultLabel;
 }
 
 export interface TodoListAppLayouts {
@@ -42,6 +42,10 @@ export interface TodoListAppLayouts {
   clear: string;
 }
 
+/**
+ * 유틸 함수 모음
+ * 싱글톤 클래스(인스턴스x)에 대응하는 목적으로 네이밍 Utils 유지
+ */
 export const Utils = {
   replaceToken: (template: string, cnt: number) => {
     return template.replace('#{}', cnt.toString());
@@ -75,37 +79,4 @@ export interface EventBusType {
 export interface TodoDndPayload {
   start: string;
   end: string;
-  // direction: 'up' | 'down';
 }
-
-export const DEFAULT_LABEL: TodoListDefaultLabel = {
-  itemCnt: 'items #{} left',
-  allItems: 'All',
-  activeItems: 'Active',
-  completedItems: 'Completed',
-  clearCompleted: 'Clear Completed (#{})',
-  noItems: 'There are no to-do items. Please write your to-dos.',
-};
-
-export const BUTTON_TYPES = {
-  ALL_ITEMS: 'allItems',
-  ACTIVE_ITEMS: 'activeItems',
-  COMPLETED_ITEMS: 'completedItems',
-  CLEAR_COMPLETED: 'clearCompleted',
-} as const;
-
-export const EVENT_BUS_TYPES = {
-  INPUT: 'input',
-  CHECK: 'check',
-  ALL_ITEMS: 'allItems',
-  ACTIVE_ITEMS: 'activeItems',
-  COMPLETED_ITEMS: 'completedItems',
-  CLEAR_COMPLETED: 'clearCompleted',
-  ADD_ITEM: 'addItem',
-  DROP: 'drop',
-};
-
-export const DND_OPTIONS = {
-  DEFAULT_Z_INDEX: 1000,
-  DETECT_CLICK_DISTANCE: 2,
-};

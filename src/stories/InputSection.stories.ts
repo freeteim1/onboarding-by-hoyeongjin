@@ -36,7 +36,7 @@ export const InputSection: Story = {
     const style = document.createElement('style');
     style.textContent = todoStyles.getStyles(app.instanceId);
 
-    const input = app.elements.createInputElements();
+    const input = app.builder.createTodoInputElement();
     root.appendChild(style);
     root.className = `${todoStyles.clsNames.root} ${app.instanceId}`;
 

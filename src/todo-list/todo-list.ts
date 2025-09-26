@@ -1,29 +1,27 @@
-import { TodoListRenderer } from 'src/models/todo-list.interface';
-import { TodoListAppDnDElements } from '../components/todo-list-elements-dnd.components';
-import { TodoListAppElements } from '../components/todo-list-elements.components';
-import { TodoListAppStyles } from '../components/todo-list-styles.components';
+import { AbstractTodoListHandler, TodoListRenderer } from 'src/models/todo-list.interface';
+import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 import {
-  BUTTON_TYPES,
-  DEFAULT_LABEL,
-  EVENT_BUS_TYPES,
-  EventBusType,
-  SelectBtnType,
-  TodoDndPayload,
-  TodoListAppOptions,
-  TodoListItem,
+  type EventBusType,
+  type SelectBtnType,
+  type TodoDndPayload,
+  type TodoListAppOptions,
+  type TodoListItem,
   Utils,
-} from '../types/todo.types';
+} from 'src/types/todo.types';
+import { BUTTON_TYPES, DEFAULT_LABEL, EVENT_BUS_TYPES } from 'src/constants/todo-list.const';
+import { TodoListElementBuilder } from 'src/components/todo-list-element-builder.components';
+import { TodoListDnDElementBuilder } from 'src/components/todo-list-dnd-element-builder.components';
 
-export default class TodoListApp implements TodoListRenderer {
+export default class TodoListApp extends AbstractTodoListHandler implements TodoListRenderer {
   private _instanceId = `todo-list-${Utils.createRandomKey(8)}`;
-  private _defaultLabel = DEFAULT_LABEL;
+  private _initialLabel = DEFAULT_LABEL;
 
-  get defaultLabel() {
-    return this._defaultLabel;
+  get initialLabel() {
+    return this._initialLabel;
   }
 
-  set defaultLabel(value) {
-    this._defaultLabel = value;
+  set initialLabel(value) {
+    this._initialLabel = value;
   }
 
   get instanceId() {
@@ -41,13 +39,13 @@ export default class TodoListApp implements TodoListRenderer {
     this._todoStyles = value;
   }
 
-  private _elements!: TodoListAppElements;
+  private _builder!: TodoListElementBuilder;
 
-  get elements() {
-    return this._elements;
+  get builder() {
+    return this._builder;
   }
-  set elements(value) {
-    this._elements = value;
+  set builder(value) {
+    this._builder = value;
   }
 
   private _options!: TodoListAppOptions;
@@ -59,7 +57,7 @@ export default class TodoListApp implements TodoListRenderer {
     this._options = value;
   }
 
-  private _selectedBtn: SelectBtnType = 'allItems';
+  private _selectedBtn: SelectBtnType = BUTTON_TYPES.ALL_ITEMS;
 
   get selectedBtn() {
     return this._selectedBtn;
@@ -67,19 +65,6 @@ export default class TodoListApp implements TodoListRenderer {
 
   set selectedBtn(value) {
     this._selectedBtn = value;
-  }
-
-  private _data = {
-    items: [] as TodoListItem[],
-    inputValue: '',
-    originItems: [] as TodoListItem[],
-  };
-
-  get data() {
-    return this._data;
-  }
-  set data(value) {
-    this._data = value;
   }
 
   private _layouts: {
@@ -115,97 +100,85 @@ export default class TodoListApp implements TodoListRenderer {
     this._layouts = value;
   }
 
-  eventBus = ({ type, payload }: EventBusType) => {
+  subscribe({ type, payload }: EventBusType) {
     switch (type) {
-      case EVENT_BUS_TYPES.INPUT:
-        this.data.inputValue = payload as string;
+      case EVENT_BUS_TYPES.CHANGE_INPUT_VALUE:
+        this.handleChangeInputValue(payload as string);
         break;
-      case EVENT_BUS_TYPES.CHECK:
-        {
-          this.data.originItems = this.data.originItems.map((i) => {
-            if (i.id === (payload as TodoListItem).id) {
-              return { ...i, isChecked: i.isChecked ? false : true };
-            }
-            return i;
-          });
-          this.dispatch();
-        }
+      case EVENT_BUS_TYPES.CHANGE_CHECK:
+        this.handleChangeCheck(payload as TodoListItem);
         break;
-      case EVENT_BUS_TYPES.ALL_ITEMS: {
-        this.selectedBtn = BUTTON_TYPES.ALL_ITEMS;
-        this.dispatch();
+      case EVENT_BUS_TYPES.CLICK_ALL_ITEMS: {
+        this.handleAllItems();
         break;
       }
-      case EVENT_BUS_TYPES.ACTIVE_ITEMS: {
-        this.selectedBtn = BUTTON_TYPES.ACTIVE_ITEMS;
-        this.dispatch();
+      case EVENT_BUS_TYPES.CLICK_ACTIVE_ITEMS: {
+        this.handleActiveItems();
         break;
       }
-      case EVENT_BUS_TYPES.COMPLETED_ITEMS: {
-        this.selectedBtn = BUTTON_TYPES.COMPLETED_ITEMS;
-        this.dispatch();
+      case EVENT_BUS_TYPES.CLICK_COMPLETED_ITEMS: {
+        this.handleCompletedItems();
         break;
       }
-      case EVENT_BUS_TYPES.CLEAR_COMPLETED: {
-        this.selectedBtn = BUTTON_TYPES.CLEAR_COMPLETED;
-        this.dispatch();
+      case EVENT_BUS_TYPES.CLICK_CLEAR_COMPLETED: {
+        this.handleClearCompleted();
         break;
       }
       case EVENT_BUS_TYPES.ADD_ITEM: {
-        if (this.data.inputValue.trim()) {
-          this.addItem();
-          this.data.inputValue = '';
-        }
+        this.handleAddItem();
         break;
       }
       case EVENT_BUS_TYPES.DROP: {
-        const { start, end } = payload as TodoDndPayload;
-        const startIndex = this.data.originItems.findIndex((el) => el.id === start);
-        const endIndex = this.data.originItems.findIndex((el) => el.id === end);
-        this.data.originItems = Utils.moveItem(this.data.originItems, startIndex, endIndex);
-        this.dispatch();
+        this.handleDrop(payload as TodoDndPayload);
         break;
       }
     }
-  };
+  }
 
   constructor(options: TodoListAppOptions) {
-    this.options = options;
-    if (!this.options) {
+    super();
+    if (!options) {
       throw new Error('Options are required');
     }
-    if (!this.options.el) {
+    if (!options.el) {
       throw new Error('Root element is required');
     }
-    if (!(this.options.el instanceof HTMLDivElement)) {
+    if (!(options.el instanceof HTMLDivElement)) {
       throw new Error('Root element must be a div');
     }
+
+    this.options = options;
+
     if (this.options.items) {
       this.data.originItems = this.options.items;
     }
-    if (this.options.defaultLabel) {
-      this.defaultLabel = {
+    if (this.options.labels) {
+      this.initialLabel = {
         ...DEFAULT_LABEL,
-        ...this.options.defaultLabel,
+        ...this.options.labels,
       };
     }
     this.todoStyles = this.options.styles || new TodoListAppStyles();
-    this.elements = this.installElements();
+    this.builder = this.initElementBuilder();
   }
 
-  installElements() {
+  // installElements() {
+  initElementBuilder() {
     if (this.options.useDnd) {
-      const dndElements = new TodoListAppDnDElements(this.options, this.todoStyles, this.eventBus);
+      const dndElements = new TodoListDnDElementBuilder(
+        this.options,
+        this.todoStyles,
+        this.subscribe.bind(this),
+      );
       dndElements.draggable(`.${this.todoStyles.clsNames.li}`);
       dndElements.dropzone(`ul.${this.todoStyles.clsNames.ul}`);
       return dndElements;
     }
-    return new TodoListAppElements(this.options, this.todoStyles, this.eventBus);
+    return new TodoListElementBuilder(this.options, this.todoStyles, this.subscribe.bind(this));
   }
 
   destroy() {}
 
-  // layout
   render() {
     this.todoStyles.addStyles(this.instanceId);
     this.initTodoList();
@@ -215,8 +188,8 @@ export default class TodoListApp implements TodoListRenderer {
   initTodoList() {
     this.layouts.root = document.createElement('div');
     this.layouts.root.className = `${this.todoStyles.clsNames.root} ${this.instanceId}`;
-    this.layouts.input = this.elements.createInputElements(); //TO DO 입력부
-    this.layouts.ul = this.elements.createListElements(); //TO DO 목록 출력부
+    this.layouts.input = this.builder.createTodoInputElement(); //TO DO 입력부
+    this.layouts.ul = this.builder.createTodoListElement(); //TO DO 목록 출력부
 
     //TO DO 정보 출력부
     const {
@@ -227,7 +200,7 @@ export default class TodoListApp implements TodoListRenderer {
       elActiveItems,
       elCompletedItems,
       elClearCompleted,
-    } = this.elements.createToolboxElements();
+    } = this.builder.createTodoToolboxElement();
 
     this.layouts.activeItems = elActiveItems;
     this.layouts.completedItems = elCompletedItems;
@@ -284,51 +257,51 @@ export default class TodoListApp implements TodoListRenderer {
           return !i.isChecked;
         });
         items = this.data.originItems;
+        this.selectedBtn = BUTTON_TYPES.ALL_ITEMS;
         break;
     }
     this.renderItems(items);
-    // this.renderItemCnt(this.data.originItems);
     this.renderItemCnt(this.data.originItems.filter((i) => !i.isChecked).length);
     this.renderFilterButtons();
     this.renderClearCompletedBtn(this.data.originItems.filter((i) => i.isChecked).length);
   }
 
-  sortItems(items: TodoListItem[]) {
+  sortList(items: TodoListItem[]) {
     if (items.length === 0) {
-      return [this.elements.createNoItems()];
+      return [this.builder.createNoItems()];
     }
     if (this.options.useDnd) {
       // d&d 사용시 정렬 x
-      return items.map((item) => this.elements.createRow(item));
+      return items.map((item) => this.builder.createRow(item));
     }
     return items
       .sort((a, b) => b.createDt - a.createDt)
       .sort((a, b) => Number(a.isChecked) - Number(b.isChecked))
-      .map((item) => this.elements.createRow(item));
+      .map((item) => this.builder.createRow(item));
   }
 
   renderItems(items: TodoListItem[]) {
-    const itemsHTML: HTMLLIElement[] = this.sortItems(items);
+    const liArr: HTMLLIElement[] = this.sortList(items);
     if (this.layouts.ul) {
       this.layouts.ul.innerHTML = '';
-      itemsHTML.forEach((li) => this.layouts.ul?.appendChild(li));
+      liArr.forEach((li) => this.layouts.ul?.appendChild(li));
     }
   }
 
   renderItemCnt(len: number) {
     if (!this.layouts.itemCnt) return;
-    this.layouts.itemCnt.textContent = Utils.replaceToken(this.defaultLabel.itemCnt, len);
+    this.layouts.itemCnt.textContent = Utils.replaceToken(this.initialLabel.itemCnt, len);
   }
 
   renderFilterButtons() {
     if (!this.layouts.buttonWrapper || !this.layouts.buttonPack) {
       return;
     }
-    const buttonPack = this.elements.createButtonPack();
-    const elAllItems = this.elements.createAllItemsButton(this.defaultLabel.allItems);
-    const elActiveItems = this.elements.createActiveItemsButton(this.defaultLabel.activeItems);
-    const elCompletedItems = this.elements.createCompletedItemsButton(
-      this.defaultLabel.completedItems,
+    const buttonPack = this.builder.createButtonPack();
+    const elAllItems = this.builder.createAllItemsButton(this.initialLabel.allItems);
+    const elActiveItems = this.builder.createActiveItemsButton(this.initialLabel.activeItems);
+    const elCompletedItems = this.builder.createCompletedItemsButton(
+      this.initialLabel.completedItems,
     );
 
     switch (this.selectedBtn) {
@@ -357,7 +330,7 @@ export default class TodoListApp implements TodoListRenderer {
     if (!this.layouts.buttonWrapper) {
       return;
     }
-    const btn = this.elements.createClearCompletedButton(this.defaultLabel.clearCompleted, cnt);
+    const btn = this.builder.createClearCompletedButton(this.initialLabel.clearCompleted, cnt);
     if (this.layouts.clearCompleted) {
       this.layouts.clearCompleted.innerHTML = '';
       this.layouts.clearCompleted.appendChild(btn);

@@ -77,7 +77,7 @@ export const StatusSection: Story = {
       elActiveItems,
       elCompletedItems,
       elClearCompleted,
-    } = app.elements.createToolboxElements(); //TO DO 정보 출력부
+    } = app.builder.createTodoToolboxElement(); //TO DO 정보 출력부
 
     app.layouts.buttonWrapper = wrapper;
 
