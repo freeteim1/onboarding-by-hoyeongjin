@@ -189,17 +189,18 @@ export default class TodoListApp implements TodoListRenderer {
         ...this.options.defaultLabel,
       };
     }
-
     this.todoStyles = this.options.styles || new TodoListAppStyles();
-    this.elements = new TodoListAppElements(this.options, this.todoStyles, this.eventBus);
+    this.elements = this.installElements();
+  }
 
+  installElements() {
     if (this.options.useDnd) {
-      this.elements = new TodoListAppDnDElements(this.options, this.todoStyles, this.eventBus);
-      if (this.elements instanceof TodoListAppDnDElements) {
-        this.elements.draggable(`.${this.todoStyles.clsNames.li}`);
-        this.elements.dropzone(`ul.${this.todoStyles.clsNames.ul}`);
-      }
+      const dndElements = new TodoListAppDnDElements(this.options, this.todoStyles, this.eventBus);
+      dndElements.draggable(`.${this.todoStyles.clsNames.li}`);
+      dndElements.dropzone(`ul.${this.todoStyles.clsNames.ul}`);
+      return dndElements;
     }
+    return new TodoListAppElements(this.options, this.todoStyles, this.eventBus);
   }
 
   destroy() {}

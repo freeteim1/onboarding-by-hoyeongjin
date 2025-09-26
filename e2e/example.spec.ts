@@ -46,12 +46,35 @@ test.describe('Todo List App', () => {
     expect(await li.count()).toBeGreaterThanOrEqual(1); // 입력 후
   });
 
-  test('', async ({ page }) => {
-    const input = await page.locator(`.${todoStyles.clsNames.input}`).first();
-    ['Test TODO1', 'Test TODO2', 'Test TODO3', 'Test TODO4'].forEach(async (txt) => {
-      await input.fill(txt);
-      await input.focus();
-      await input.press('Enter');
-    });
+  test('D&D 마지막 요소를 맨앞에', async ({ page }) => {
+    const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
+    const li = todoUl.locator('li');
+    const input = page.locator(`.${todoStyles.clsNames.input}`).first();
+
+    const items: string[] = ['Test TODO1', 'Test TODO2', 'Test TODO3', 'Test TODO4'];
+
+    await input.fill(items[0] ?? '');
+    await input.press('Enter');
+    await page.waitForTimeout(100);
+
+    await input.fill(items[1] ?? '');
+    await input.press('Enter');
+    await page.waitForTimeout(100);
+
+    await input.fill(items[2] ?? '');
+    await input.press('Enter');
+    await page.waitForTimeout(100);
+
+    await input.fill(items[3] ?? '');
+    await input.press('Enter');
+    await page.waitForTimeout(100);
+
+    await page.dragAndDrop(
+      `.${todoStyles.clsNames.li} >> nth=3`,
+      `.${todoStyles.clsNames.li} >> nth=0`,
+    );
+    await page.waitForTimeout(100);
+
+    expect(await li.nth(0).textContent()).toContain(items[3]);
   });
 });
