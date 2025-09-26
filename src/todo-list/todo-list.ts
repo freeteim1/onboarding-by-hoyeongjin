@@ -202,6 +202,8 @@ export default class TodoListApp implements TodoListRenderer {
     }
   }
 
+  destroy() {}
+
   // layout
   render() {
     this.todoStyles.addStyles(this.instanceId);

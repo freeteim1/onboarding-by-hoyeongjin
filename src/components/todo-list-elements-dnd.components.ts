@@ -14,6 +14,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
   dragStartPosition = { x: 0, y: 0 };
 
   private _cloneLiClsName = 'todo-dnd-clone';
+  underlineClsName = 'todo-dnd-underline';
 
   get cloneLiClsName() {
     return this._cloneLiClsName;
@@ -90,6 +91,8 @@ export class TodoListAppDnDElements extends TodoListAppElements {
               `${e.clientX - initialX}px`,
               `${e.clientY - initialY}px`,
             );
+            const target = this.fromPointLi(e);
+            this.drawUnderline(target);
           };
 
           const onMouseup = (e: MouseEvent) => {
@@ -123,6 +126,7 @@ export class TodoListAppDnDElements extends TodoListAppElements {
             });
             ul.removeEventListener('mousemove', onMousemove);
             ul.removeEventListener('mouseup', onMouseup);
+            this.removeUnderline();
           };
           ul.addEventListener('mousemove', onMousemove);
           ul.addEventListener('mouseup', onMouseup);
@@ -157,5 +161,19 @@ export class TodoListAppDnDElements extends TodoListAppElements {
         !(el as HTMLElement).classList.contains(this.cloneLiClsName)
       );
     }) as HTMLElement;
+  }
+
+  drawUnderline(target: HTMLElement) {
+    this.removeUnderline();
+    if (!target) {
+      return;
+    }
+    target.classList.add(this.underlineClsName);
+  }
+
+  removeUnderline() {
+    document.querySelectorAll(this.draggableClsName).forEach((el) => {
+      el.classList.remove(this.underlineClsName);
+    });
   }
 }

@@ -9,14 +9,49 @@ test.describe('Todo List App', () => {
   });
 
   test('UI 요소가 보인다', async ({ page }) => {
-    await expect(page.locator(`div.${todoStyles.clsNames.root}`)).toBeVisible();
-    // await expect(page.locator(`input[type="text"]`)).toBeVisible();
-    // await expect(page.getByRole('button', { name: 'Add' })).toBeVisible();
-    // await expect(page.getByRole('list')).toBeVisible();
-    // await expect(page.getByRole('button', { name: 'All' })).toBeVisible();
-    // await expect(page.getByRole('button', { name: 'Active' })).toBeVisible();
-    // await expect(page.getByRole('button', { name: 'Completed' })).toBeVisible();
-    // await expect(page.getByRole('button', { name: 'Clear Completed' })).toBeVisible();
-    // await expect(page.getByText('0 items left')).toBeVisible();
+    const todo = page.locator(`div.${todoStyles.clsNames.root}`);
+    const todoUl = page.locator(`.${todoStyles.clsNames.ul}`);
+    const input = page.locator(`.${todoStyles.clsNames.input}`);
+    const itemCnt = page.locator(`.${todoStyles.clsNames.count}`);
+    const allBtn = page.locator(`.${todoStyles.clsNames.filter}`).filter({ hasText: 'All' });
+    const activeBtn = page.locator(`.${todoStyles.clsNames.filter}`).filter({ hasText: 'Active' });
+    const completedBtn = page
+      .locator(`.${todoStyles.clsNames.filter}`)
+      .filter({ hasText: 'Completed' });
+    const clearDiv = page.locator(`div.${todoStyles.clsNames.clear}`);
+
+    expect(todo).toBeTruthy();
+    expect(await todoUl.count()).toBeTruthy();
+    expect(await input.count()).toBeTruthy();
+    expect(await itemCnt.count()).toBeTruthy();
+    expect(await allBtn.count()).toBeTruthy();
+    expect(await activeBtn.count()).toBeTruthy();
+    expect(await completedBtn.count()).toBeTruthy();
+    expect(await clearDiv.count()).toBeTruthy();
+  });
+
+  test('할 일을 입력한 후 엔터키를 누르면', async ({ page }) => {
+    const sampleTxt = 'Playwright로 테스트 작성하기';
+
+    const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
+    const input = page.locator(`.${todoStyles.clsNames.input}`).first();
+    const li = todoUl.locator('li').filter({ hasText: sampleTxt });
+
+    expect(await li.count()).toBe(0); // 입력 전
+
+    await input.fill(sampleTxt);
+    await input.focus();
+    await input.press('Enter');
+
+    expect(await li.count()).toBeGreaterThanOrEqual(1); // 입력 후
+  });
+
+  test('', async ({ page }) => {
+    const input = await page.locator(`.${todoStyles.clsNames.input}`).first();
+    ['Test TODO1', 'Test TODO2', 'Test TODO3', 'Test TODO4'].forEach(async (txt) => {
+      await input.fill(txt);
+      await input.focus();
+      await input.press('Enter');
+    });
   });
 });

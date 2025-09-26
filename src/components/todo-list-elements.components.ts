@@ -75,7 +75,16 @@ export class TodoListAppElements {
   }
 
   createInputElements() {
+    let isComposing = false;
     const events: EventsPayload[] = [
+      {
+        type: 'compositionstart',
+        handler: (e: Event) => (isComposing = true),
+      },
+      {
+        type: 'compositionend',
+        handler: (e: Event) => (isComposing = false),
+      },
       {
         type: 'input',
         handler: (e: Event) => {
@@ -90,6 +99,9 @@ export class TodoListAppElements {
         type: 'keydown',
         handler: (e: Event) => {
           if ((e as KeyboardEvent).key === 'Enter') {
+            if (isComposing) {
+              return;
+            }
             this.dispatch({
               type: EVENT_BUS_TYPES.ADD_ITEM,
             });

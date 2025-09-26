@@ -59,7 +59,7 @@ describe('TodoListApp', () => {
           id: '2',
           label: 'Test TODO2',
           isChecked: false,
-          createDt: Date.now(),
+          createDt: Date.now() - 1000 * 60 * 60 * 1,
         },
       ];
       todoApp.initTodoList();
@@ -68,23 +68,18 @@ describe('TodoListApp', () => {
     });
 
     test('#4-2 TO-DO는 등록순으로 정렬되어 최근에 등록한 TO-DO 항목이 목록의 상단에 위치한다.', () => {
-      const today = new Date();
-      const yesterday = new Date();
-      yesterday.setDate(today.getDate() - 1);
-      const twoDaysAgo = new Date();
-      twoDaysAgo.setDate(today.getDate() - 2);
       const sampleData = [
         {
           id: '1',
           label: 'Test TODO1',
           isChecked: false,
-          createDt: yesterday.getTime(),
+          createDt: Date.now() - 1000 * 60 * 60 * 1,
         },
         {
           id: '2',
           label: 'Test TODO2',
           isChecked: false,
-          createDt: twoDaysAgo.getTime(),
+          createDt: Date.now() - 1000 * 60 * 60 * 2,
         },
       ];
       const newTodo = new TodoListApp({ el: div, items: [...sampleData] });

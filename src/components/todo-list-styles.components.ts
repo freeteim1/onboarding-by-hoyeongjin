@@ -113,6 +113,9 @@ export class TodoListAppStyles {
     -moz-user-select:none;
     -ms-user-select:none;
     user-select:none
+  }
+  .todo-dnd-underline {
+    border-top: 2px solid purple !important;
   }`;
 
   getRootStyle() {
