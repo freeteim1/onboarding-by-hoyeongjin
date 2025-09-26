@@ -58,6 +58,7 @@ test.describe('Todo List App', () => {
 
     test('할 일 항목의 완료하지 않은 갯수가 "N" items left  로 노출된다.', async ({ page }) => {});
   });
+  
   test('D&D 마지막 요소를 맨앞에', async ({ page }) => {
     const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
     const li = todoUl.locator('li');
