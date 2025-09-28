@@ -57,6 +57,10 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
     this._options = value;
   }
 
+  get useDnd() {
+    return this.options.useDnd || false;
+  }
+
   private _selectedBtn: SelectBtnType = BUTTON_TYPES.ALL_ITEMS;
 
   get selectedBtn() {
@@ -162,7 +166,6 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
     this.builder = this.initElementBuilder();
   }
 
-  // installElements() {
   initElementBuilder() {
     if (this.options.useDnd) {
       const dndElements = new TodoListDnDElementBuilder(
@@ -177,7 +180,11 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
     return new TodoListElementBuilder(this.options, this.todoStyles, this.subscribe.bind(this));
   }
 
-  destroy() {}
+  destroy() {
+    if (this.layouts.root && this.options.el.contains(this.layouts.root)) {
+      this.options.el.removeChild(this.layouts.root);
+    }
+  }
 
   render() {
     this.todoStyles.addStyles(this.instanceId);
@@ -188,6 +195,9 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
   initTodoList() {
     this.layouts.root = document.createElement('div');
     this.layouts.root.className = `${this.todoStyles.clsNames.root} ${this.instanceId}`;
+    if (this.useDnd) {
+      this.layouts.root.classList.add('useDnD');
+    }
     this.layouts.input = this.builder.createTodoInputElement(); //TO DO 입력부
     this.layouts.ul = this.builder.createTodoListElement(); //TO DO 목록 출력부
 
