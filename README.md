@@ -26,6 +26,35 @@ npm install
 | E2E 테스트 ui 모드      | `npm run e2e:ui`                  |
 | Storybook               | `npm run storybook`               |
 
+## 3. src
+
+```
+├── components
+│ ├── todo-list-dnd-element-builder.components.ts
+│ ├── todo-list-element-builder.components.ts
+│ ├── todo-list-renderer.component.ts
+│ └── todo-list-styles.components.ts
+├── constants
+│ └── todo-list.const.ts
+├── index.css
+├── index.ts
+├── models
+│ └── todo-list.interface.ts
+├── stories
+│ ├── InputSection.stories.ts
+│ ├── ListSection
+│ │ ├── NoTodoItems.stories.ts
+│ │ ├── TodoListWithCheckedItem.stories.ts
+│ │ └── TodoListWithItem.stories.ts
+│ ├── StatusSection.stories.ts
+│ └── TodoListApp.stories.ts
+├── todo-list
+│ ├── todo-list.spec.ts
+│ └── todo-list.ts
+└── types
+└── todo.types.ts
+```
+
 # 초기 세팅
 
 npm init -y

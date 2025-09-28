@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
+import { DEFAULT_LABEL } from 'src/constants/todo-list.const';
+import { Utils } from 'src/types/todo.types';
 
 test.describe('Todo List App', () => {
   let todoStyles: TodoListAppStyles;
@@ -56,15 +58,145 @@ test.describe('Todo List App', () => {
       expect(await li.count()).toBeGreaterThanOrEqual(1); // 입력 후
     });
 
-    test('할 일 항목의 완료하지 않은 갯수가 "N" items left  로 노출된다.', async ({ page }) => {});
-  });
-  
-  test('D&D 마지막 요소를 맨앞에', async ({ page }) => {
-    const todoUl = page.locator(`.${todoStyles.clsNames.ul}`).first();
-    const li = todoUl.locator('li');
-    const input = page.locator(`.${todoStyles.clsNames.input}`).first();
+    test(
+      '할 일 항목의 완료하지 않은 갯수가 ' + DEFAULT_LABEL.itemCnt + '  로 노출된다.',
+      async ({ page }) => {
+        const root = page.locator(`div.${todoStyles.clsNames.root}`).first();
+        const ul = root.locator(`.${todoStyles.clsNames.ul}`);
+        const input = root.locator(`.${todoStyles.clsNames.input}`);
+        const itemCnt = root.locator(`.${todoStyles.clsNames.count}`);
+        const li = ul.locator('li');
 
+        await input.fill('1. 스토리북 작성하기.');
+        await input.press('Enter');
+
+        await input.fill('2. jest 테스트 작성하기');
+        await input.press('Enter');
+
+        await input.fill('3. Playwright로 테스트 작성하기'); // <<- click
+        await input.press('Enter');
+
+        expect(await itemCnt.textContent()).toBe(Utils.replaceToken(DEFAULT_LABEL.itemCnt, 3));
+        await li.first().click();
+        expect(await itemCnt.textContent()).toBe(Utils.replaceToken(DEFAULT_LABEL.itemCnt, 2));
+      },
+    );
+  });
+
+  test.describe('할 일 항목을 체크하면', () => {
+    test('완료된 항목은 목록의 맨 하단으로 이동된다.', async ({ page }) => {
+      const root = page.locator(`div.${todoStyles.clsNames.root}:not(.useDnD)`).first();
+      const input = root.locator(`.${todoStyles.clsNames.input}`);
+      const li = root.locator(`.${todoStyles.clsNames.li}`);
+
+      await input.fill('1. 스토리북 작성하기.');
+      await input.press('Enter');
+
+      await input.fill('2. jest 테스트 작성하기');
+      await input.press('Enter');
+
+      await input.fill('3. Playwright로 테스트 작성하기'); // <<- click
+      await input.press('Enter');
+
+      expect(li.last()).toContainText('1. 스토리북 작성하기.'); // 가장 먼저 입력됐으니 last
+      await li.first().click();
+
+      expect(li.last()).not.toContainText('1. 스토리북 작성하기.'); // last 바뀜 검증
+      expect(li.last()).toContainText('3. Playwright로 테스트 작성하기');
+      expect(li.last().locator('input[type=checkbox]')).toBeChecked();
+    });
+  });
+
+  test.describe('"Clear completed" 버튼을 클릭하면', () => {
+    test('완료된 항목은 목록에서 제거된다. + 완료된 항목 갯수가 0으로 초기화 된다.', async ({
+      page,
+    }) => {
+      const root = page.locator(`div.${todoStyles.clsNames.root}:not(.useDnD)`).first();
+      const input = root.locator(`.${todoStyles.clsNames.input}`);
+      const li = root.locator(`.${todoStyles.clsNames.li}`);
+      const clearBtn = root.locator(`div.${todoStyles.clsNames.clear}`);
+
+      await input.fill('1. 스토리북 작성하기.');
+      await input.press('Enter');
+
+      await input.fill('2. jest 테스트 작성하기');
+      await input.press('Enter');
+
+      await input.fill('3. Playwright로 테스트 작성하기'); // <<- click
+      await input.press('Enter');
+
+      expect(await li.count()).toBe(3);
+      await li.first().click();
+
+      expect(await li.count()).toBe(3);
+      await clearBtn.click();
+
+      expect(await li.count()).toBe(2);
+      expect(li.locator('input[type=checkbox]:checked')).toHaveCount(0); // 체크된 인풋이 실제로 없는지
+      expect(await clearBtn.allTextContents()).toContain('Clear Completed (0)');
+    });
+  });
+
+  test.describe('보기 타입 버튼 메뉴에서', () => {
+    test('"Active" 버튼을 클릭하면 완료되지 않은 목록을 노출한다.', async ({ page }) => {
+      const root = page.locator(`div.${todoStyles.clsNames.root}:not(.useDnD)`).first();
+      const input = root.locator(`.${todoStyles.clsNames.input}`);
+      const li = root.locator(`.${todoStyles.clsNames.li}`);
+      const activeBtn = root
+        .locator(`.${todoStyles.clsNames.filter}`)
+        .filter({ hasText: 'Active' });
+
+      await input.fill('1. 스토리북 작성하기.');
+      await input.press('Enter');
+
+      await input.fill('2. jest 테스트 작성하기');
+      await input.press('Enter');
+
+      await input.fill('3. Playwright로 테스트 작성하기'); // <<- click
+      await input.press('Enter');
+
+      await li.first().click();
+
+      expect(await li.count()).toBe(3);
+      await activeBtn.click();
+      expect(await li.count()).toBe(2);
+      expect(li.locator('input[type=checkbox]:checked')).toHaveCount(0);
+    });
+
+    test('"Completed" 버튼을 클릭하면 완료된 항목을 노출한다.', async ({ page }) => {
+      const root = page.locator(`div.${todoStyles.clsNames.root}:not(.useDnD)`).first();
+      const input = root.locator(`.${todoStyles.clsNames.input}`);
+      const li = root.locator(`.${todoStyles.clsNames.li}`);
+      const completedBtn = root
+        .locator(`.${todoStyles.clsNames.filter}`)
+        .filter({ hasText: 'Completed' });
+
+      await input.fill('1. 스토리북 작성하기.');
+      await input.press('Enter');
+
+      await input.fill('2. jest 테스트 작성하기');
+      await input.press('Enter');
+
+      await input.fill('3. Playwright로 테스트 작성하기'); // <<- click
+      await input.press('Enter');
+
+      await li.first().click();
+
+      expect(await li.count()).toBe(3);
+      await completedBtn.click();
+      expect(await li.count()).toBe(1);
+      expect(li.locator('input[type=checkbox]:checked')).toHaveCount(1);
+    });
+  });
+
+  test('D&D 마지막 요소를 맨앞에', async ({ page }) => {
+    const root = page.locator(`div.${todoStyles.clsNames.root}.useDnD`).first();
+    const ul = root.locator(`.${todoStyles.clsNames.ul}`).first();
+    const li = ul.locator('li');
+    const input = root.locator(`.${todoStyles.clsNames.input}`).first();
     const items: string[] = ['Test TODO1', 'Test TODO2', 'Test TODO3', 'Test TODO4'];
+
+    expect(ul).toBeTruthy();
 
     await input.fill(items[0] ?? '');
     await input.press('Enter');
