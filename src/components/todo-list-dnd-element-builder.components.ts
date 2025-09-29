@@ -1,3 +1,6 @@
+/**
+ * @description 드래그앤드롭 UI 생성 클래스
+ */
 import { DND_OPTIONS, EVENT_BUS_TYPES } from '../constants/todo-list.const';
 import { EventBusType, type EventsPayload, type TodoListAppOptions } from '../types/todo.types';
 import { TodoListElementBuilder } from './todo-list-element-builder.components';

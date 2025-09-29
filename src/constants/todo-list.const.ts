@@ -1,3 +1,6 @@
+/**
+ * @description 상수
+ */
 import { type TodoListDefaultLabel } from 'src/types/todo.types';
 
 export const DEFAULT_LABEL: TodoListDefaultLabel = {

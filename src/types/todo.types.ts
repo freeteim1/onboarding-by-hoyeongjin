@@ -1,3 +1,6 @@
+/**
+ * @description 타입 정의, 유틸 함수
+ */
 import { TodoListAppStyles } from '../components/todo-list-styles.components';
 
 export type SelectBtnType = 'allItems' | 'activeItems' | 'completedItems' | 'clearCompleted';

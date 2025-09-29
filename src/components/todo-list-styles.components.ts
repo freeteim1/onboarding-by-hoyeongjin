@@ -1,3 +1,6 @@
+/**
+ * @description 스타일 클래스
+ */
 import { type TodoListAppLayouts } from 'src/types/todo.types';
 
 export class TodoListAppStyles {

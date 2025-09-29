@@ -1,3 +1,6 @@
+/**
+ * @description UI 생성 클래스
+ */
 import { DEFAULT_LABEL, EVENT_BUS_TYPES } from '../constants/todo-list.const';
 import {
   Utils,

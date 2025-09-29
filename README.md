@@ -202,3 +202,131 @@ c.module.rules.push({
     '^src/(.*)$': '<rootDir>/src/$1',
   },
 ```
+
+```mermaid
+classDiagram
+  class AbstractTodoListHandler {
+  <<abstract>>
+    - _data: TodoListData
+
+    %% 확장
+    + selectedBtn: string
+    + dispatch() void
+    + addItem() void
+
+    %% 기본
+    + handleChangeInputValue(payload: string) void
+    + handleChangeCheck(payload: TodoListItem) void
+    + handleAllItems() void
+    + handleActiveItems() void
+    + handleCompletedItems() void
+    + handleClearCompleted() void
+    + handleAddItem() void
+    + handleDrop(payload: TodoDndPayload) void
+  }
+
+  class BUTTON_TYPES {
+    <<enum>>
+    + ALL_ITEMS
+    + ACTIVE_ITEMS
+    + COMPLETED_ITEMS
+    + CLEAR_COMPLETED
+  }
+
+  class Utils {
+    + replaceToken(template: string, cnt: number): string
+    + moveItem(arr: TodoListItem[], fromIndex: number, toIndex: number): TodoListItem[]
+    + createRandomKey(len: number): string
+  }
+
+
+  class TodoListRenderer {
+    <<interface>>
+    + render()
+    + renderItems(items: TodoListItem[]): void
+    + renderItemCnt(len: number): void
+    + renderClearCompletedBtn(cnt: number): void
+    + renderFilterButtons()
+  }
+
+  class TodoListApp {
+    - _instanceId: string
+    - _initialLabel: TodoListDefaultLabel
+    - _todoStyles: TodoListAppStyles
+    - _builder: TodoListElementBuilder
+    - _options: TodoListAppOptions
+    - _selectedBtn: SelectBtnType
+    - _layouts: object
+
+    + subscribe(type: EventBusType): void
+
+    + initElementBuilder(): void
+    + destroy(): void
+    + render(): void
+    + initTodoList(): void
+    + addItem(): void
+    + dispatch(initialItems?: TodoListItem[]): void
+    + sortList(items: TodoListItem[])
+    + renderItems(items: TodoListItem[])
+    + renderItemCnt(len: number)
+    + renderFilterButtons()
+    + renderClearCompletedBtn(cnt: number)
+  }
+
+  class TodoListElementBuilder {
+    - options: TodoListAppOptions
+    - initialLabel: TodoListDefaultLabel
+    + todoStyles
+
+    + dispatch(event: EventBusType): void
+    + createUl(events: EventsPayload[] = []): HTMLUListElement
+    + createInput(events: EventsPayload[] = []): HTMLInputElement
+    + createRow(item: TodoListItem): HTMLLIElement
+    + createNoItems(): HTMLLIElement
+    + createTodoInputElement(): HTMLInputElement
+    + onChangeCheckbox(e: Event): void
+    + createTodoListElement(): HTMLUListElement
+    + createTodoToolboxElement(): object
+    + getLiDataId(e: Event): string | undefined
+    + createButtonPack(): HTMLDivElement
+    + createItemCntLabel(text: string, cnt: number): HTMLLabelElement
+    + createAllItemsButton(btnText: string): HTMLButtonElement
+    + createActiveItemsButton(btnText: string): HTMLButtonElement
+    + createCompletedItemsButton(btnText: string): HTMLButtonElement
+    + createClearCompletedButton(btnText: string, num: number): HTMLButtonElement
+    + attachEvents(target: HTMLElement, events: EventsPayload[]): void
+  }
+
+  class TodoListDnDElementBuilder {
+    + dragItem: HTMLLIElement | null = null
+    + draggableClsName: string
+    + dropzoneClsName: string
+    + dragStartPosition: object
+    + cloneLiClsName: string = 'todo-dnd-clone'
+    + underlineClsName: string = 'todo-dnd-underline'
+
+    <<constructor>> TodoListDnDElementBuilder(
+      options: TodoListAppOptions,
+      styles: TodoListAppStyles,
+      eventBus: (e: EventBusType) => void
+    )
+
+    + draggable(draggableClsName: string): void
+    + dropzone(dropzoneClsName: string): void
+    + createCloneLi(li: HTMLLIElement): HTMLLIElement
+    <<override>>
+    + createTodoListElement(): HTMLUListElement
+    + floatItem(item: HTMLElement): void
+    + setItemPosition(item: HTMLElement, left: string, top: string): void
+    + fromPointLi(e: MouseEvent): HTMLElement
+    + drawUnderline(target: HTMLElement): void
+    + removeUnderline(): void
+  }
+
+  TodoListApp <|-- AbstractTodoListHandler
+  TodoListApp <|.. TodoListRenderer
+  TodoListDnDElementBuilder <|-- TodoListElementBuilder
+  TodoListApp --> TodoListElementBuilder
+  AbstractTodoListHandler ..> Utils : uses
+  AbstractTodoListHandler ..> BUTTON_TYPES : uses
+```

@@ -1,4 +1,4 @@
-import { AbstractTodoListHandler, TodoListRenderer } from 'src/models/todo-list.interface';
+import { TodoListRenderer } from 'src/models/todo-list.interface';
 import { TodoListAppStyles } from 'src/components/todo-list-styles.components';
 import {
   type EventBusType,
@@ -11,6 +11,7 @@ import {
 import { BUTTON_TYPES, DEFAULT_LABEL, EVENT_BUS_TYPES } from 'src/constants/todo-list.const';
 import { TodoListElementBuilder } from 'src/components/todo-list-element-builder.components';
 import { TodoListDnDElementBuilder } from 'src/components/todo-list-dnd-element-builder.components';
+import { AbstractTodoListHandler } from 'src/components/abstract-todo-list-handler';
 
 export default class TodoListApp extends AbstractTodoListHandler implements TodoListRenderer {
   private _instanceId = `todo-list-${Utils.createRandomKey(8)}`;
