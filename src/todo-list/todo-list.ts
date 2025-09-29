@@ -184,6 +184,19 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
   destroy() {
     if (this.layouts.root && this.options.el.contains(this.layouts.root)) {
       this.options.el.removeChild(this.layouts.root);
+      this.layouts = {
+        root: null,
+        ul: null,
+        input: null,
+        buttonWrapper: null,
+        itemCnt: null,
+        allItems: null,
+        activeItems: null,
+        completedItems: null,
+        clearCompleted: null,
+        noItems: null,
+        buttonPack: null,
+      };
     }
     this.todoStyles.removeStyles(this.instanceId); // 리뷰 개선사항 반영
   }
