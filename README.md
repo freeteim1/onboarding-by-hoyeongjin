@@ -282,7 +282,7 @@ classDiagram
     + createUl(events: EventsPayload[] = []): HTMLUListElement
     + createInput(events: EventsPayload[] = []): HTMLInputElement
     + createRow(item: TodoListItem): HTMLLIElement
-    + createNoItems(): HTMLLIElement
+    + createEmptyRow(): HTMLLIElement
     + createTodoInputElement(): HTMLInputElement
     + onChangeCheckbox(e: Event): void
     + createTodoListElement(): HTMLUListElement

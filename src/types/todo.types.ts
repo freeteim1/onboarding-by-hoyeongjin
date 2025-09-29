@@ -59,7 +59,9 @@ export const Utils = {
     if (!item) {
       return arr;
     }
-    newArr.splice(toIndex, 0, item);
+    const normalizedToIndex = toIndex > fromIndex ? toIndex - 1 : toIndex;
+    newArr.splice(normalizedToIndex, 0, item);
+    // newArr.splice(toIndex, 0, item); // 리뷰 개선사항 반영
     return newArr;
   },
   createRandomKey: (len: number) => {

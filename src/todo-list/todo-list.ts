@@ -185,6 +185,7 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
     if (this.layouts.root && this.options.el.contains(this.layouts.root)) {
       this.options.el.removeChild(this.layouts.root);
     }
+    this.todoStyles.removeStyles(this.instanceId); // 리뷰 개선사항 반영
   }
 
   render() {
@@ -279,7 +280,7 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
 
   sortList(items: TodoListItem[]) {
     if (items.length === 0) {
-      return [this.builder.createNoItems()];
+      return [this.builder.createEmptyRow()];
     }
     if (this.options.useDnd) {
       // d&d 사용시 정렬 x

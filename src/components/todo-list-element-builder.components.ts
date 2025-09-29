@@ -69,7 +69,7 @@ export class TodoListElementBuilder {
     return li;
   }
 
-  createNoItems() {
+  createEmptyRow() {
     const li = document.createElement('li');
     li.className = `${this.todoStyles.clsNames.li} ${this.todoStyles.clsNames.noItems}`;
     li.textContent = this.initialLabel.noItems;

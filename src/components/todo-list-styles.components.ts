@@ -197,4 +197,12 @@ export class TodoListAppStyles {
     style.textContent = this.getStyles(instanceId);
     document.head.appendChild(style);
   }
+
+  removeStyles(instanceId: string) {
+    const styleId = `todo-styles-${instanceId}`;
+    const styleElement = document.getElementById(styleId);
+    if (styleElement) {
+      document.head.removeChild(styleElement);
+    }
+  }
 }
