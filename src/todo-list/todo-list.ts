@@ -252,7 +252,7 @@ export default class TodoListApp extends AbstractTodoListHandler implements Todo
   addItem() {
     const newItem: TodoListItem = {
       id: Date.now().toString(),
-      label: this.data.inputValue,
+      label: this.data.inputValue.trim(),
       isChecked: false,
       createDt: Date.now(),
     };
