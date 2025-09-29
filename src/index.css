@@ -1,0 +1,28 @@
+/* reset */
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+.todo {
+    /* 기본 테마 변수 */
+    --bg: #f9f9f9;
+    --surface: #ffffff;
+    --text: #333333;
+    --border: #dddddd;
+    --border-light: #eeeeee;
+    --btn-active: #4CAF50;
+    --danger: #f44336;
+
+    /* max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+#app,
+#app2 {
+    margin: 20px;
+}
