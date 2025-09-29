@@ -36,15 +36,15 @@ function secondRender() {
     align-items: center;
     padding: 6px 12px;
     background: pink;
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid #dddddd;
   }`;
 
   styles.btnFilterStyle = `{
     margin: 0 4px;
     padding: 4px 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    color: #333333;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;

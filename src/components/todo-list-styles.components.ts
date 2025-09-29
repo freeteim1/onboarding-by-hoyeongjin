@@ -29,11 +29,11 @@ export class TodoListAppStyles {
   inputStyle = `{
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--border);
+    border: 1px solid #dddddd;
     border-radius: 4px;
     font-size: 16px;
-    background: var(--surface);
-    color: var(--text);
+    background: #ffffff;
+    color: #333333;
     box-sizing: border-box;
   }`;
 
@@ -46,8 +46,8 @@ export class TodoListAppStyles {
     display: flex;
     align-items: center;
     padding: 6px 12px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border-light);
+    background: #ffffff;
+    border-bottom: 1px solid #dddddd;
   }`;
 
   checkboxStyle = `{
@@ -61,16 +61,16 @@ export class TodoListAppStyles {
     flex: 1;
     cursor: pointer;
     user-select: none;
-    color: var(--text);
+    color: #333333;
   }`;
 
   buttonWrapperStyle = `{
     position: relative;
     display: flex;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #dddddd;
     align-items: center;
     padding: 2px 12px;
-    background: var(--surface);
+    background: #ffffff;
   }`;
 
   buttonPackStyle = `{
@@ -86,9 +86,9 @@ export class TodoListAppStyles {
   btnFilterStyle = `{
     margin: 0 4px;
     padding: 4px 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    color: #333333;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
@@ -103,9 +103,9 @@ export class TodoListAppStyles {
     margin: 0 8px;
     display: inline-block;
     padding: 4px;
-    border: 1px solid var(--danger);
-    background: var(--surface);
-    color: var(--danger);
+    border: 1px solid #f44336;
+    background: #ffffff;
+    color: #f44336;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
@@ -154,7 +154,7 @@ export class TodoListAppStyles {
   }
   getActiveFilterBtnStyle() {
     return `.${this.clsNames.filter} ${this.btnFilterStyle}.active {
-      border-color: var(--danger) !important;
+      border-color: #f44336 !important;
     }`;
   }
   getDivClearStyle() {

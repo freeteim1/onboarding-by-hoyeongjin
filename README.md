@@ -1,8 +1,6 @@
 # 프로젝트 실행 방법
 
-## 설치 및 실행
-
-## 요구사항
+### 요구사항
 
 - Node.js v20 (하위 호환 확인필요!)
 - npm
@@ -26,7 +24,7 @@ npm install
 | E2E 테스트 ui 모드      | `npm run e2e:ui`                  |
 | Storybook               | `npm run storybook`               |
 
-## 3. src
+### 3. src
 
 ```
 ├── components
@@ -55,7 +53,7 @@ npm install
 └── todo.types.ts
 ```
 
-# 초기 세팅
+## 초기 세팅 참고
 
 npm init -y
 
@@ -102,7 +100,7 @@ npm init -y
 - E2E(Playwright)
   - npm i -D @playwright/test start-server-and-test
 
-# 요구 사항 정리
+# 요구 사항 메모
 
 ## 기본 동작
 
@@ -127,11 +125,11 @@ npm init -y
   하단 정보 출력부
 - 현재 남아있는 완료 전 TO-DO 항목의 갯수를 출력한다.
 - [전체], [완료 전], [완료됨] 의 탭으로 TO-DO 목록을 필터해 볼 수 있는 기능을 제공한다.
-- 완료 항복 삭제 기능을 제공한다.\*\*\*\*
+- 완료 항복 삭제 기능을 제공한다.
 
-# 이슈 정리
+## 이슈 정리
 
-## 스토리북 세팅 문제
+### 스토리북 세팅 문제
 
 - @storybook/html-webpack5 미설치, main.ts 누락 문제
   - 설치확인: npm ls @storybook/html-webpack5
@@ -145,13 +143,13 @@ npm init -y
 - 'src/...' 경로는 현재 Storybook webpack 설정에서 alias 미설정.
   - 경로를 상대경로로 변경
 
-## prettier 누락 관련
+### prettier 누락 관련
 
 - settings.json 파일을 통해 적용했던 기존 내용 변경
 - "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features"}
   - "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 
-## devtool 옵션 관련
+### devtool 옵션 관련
 
 - source-map -> eval-cheap-module-source-map
 - 디버기
@@ -161,13 +159,13 @@ npm init -y
   | source-map | 느림 | 줄 + 열 단위 (정확함)
 - 디버깅시 source map 과 브레이크 포인트의 위치가 안맞는 문제가 있어 롤백
 
-## jest 렌더링 관련
+### jest 렌더링 관련
 
 - jest + jsdom 환경에서 label.innerText → 기대한 값이 안 나올 수 있음
 - 대신 label.textContent 또는 label.innerHTML을 사용하세요.
 - 테스트에서 텍스트 확인은 보통 textContent를 쓰는 게 가장 안전합니다.
 
-## 스토리북에서 css변수 사용을 위한 전역 css 올리기 실패
+### 스토리북에서 css변수 사용을 위한 전역 css 올리기 실패
 
 - 아래 코드로 실패
 
@@ -179,7 +177,7 @@ c.module.rules.push({
 });
 ```
 
-## 실행환경 오류 관련 정리
+### 실행환경 오류 관련 정리
 
 ```
 - .npmrc engine-strict=true 의미 : package.json 의 engines 요구 조건을 강제함
@@ -187,7 +185,7 @@ c.module.rules.push({
 - package.json 에 packageManager : yarn 이나 다른 패키지매니저 사용 못 하게 막음
 ```
 
-## 절대경로 인식 불가 문제
+### 절대경로 인식 불가 문제
 
 - tsconfig.json path 세팅 누락으로 상대경로에서만 실행가능했던 문제
 
@@ -204,6 +202,7 @@ c.module.rules.push({
 ```
 
 # 클래스 관계 다이어그램
+
 ```mermaid
 classDiagram
   class AbstractTodoListHandler {
